@@ -352,7 +352,8 @@ body.product-page {
         </div>
         <div class="sidebar-menu">
             <div class="sidebar-item shiny-effect" onclick="navTo('home')"><i class="fas fa-home"></i> Home</div>
-            <div class="sidebar-item shiny-effect" onclick="navTo('app-page')"><i class="fas fa-crown"></i> Aplikasi Premium</div>
+            <div class="sidebar-item shiny-effect" onclick="openPremiumApp()"><i class="fas fa-gem"></i> Aplikasi Premium</div>
+            <div class="sidebar-item shiny-effect" onclick="openProdukDigital()"><i class="fas fa-crown"></i> Produk Digital</div>
             <div class="sidebar-item shiny-effect" onclick="navTo('sosmed-page')"><i class="fas fa-rocket"></i> Suntik Sosmed</div>
             <div class="sidebar-item shiny-effect" onclick="navTo('all-products')"><i class="fas fa-search"></i> Semua Produk</div>
             <div class="sidebar-item shiny-effect" onclick="toggleMode()"><i class="fas fa-adjust"></i> Dark/Light Mode</div>
@@ -2373,6 +2374,26 @@ body.product-page {
         function toggleMode() {
             playClick(); document.body.classList.toggle('light-mode');
         }
+
+
+        function openPremiumApp() {
+            playClick();
+            toggleSidebar();
+
+            const url = 'https://app-premium-kzrizusmo.vercel.app';
+            const win = window.open(url, '_blank');
+            if (!win) window.location.href = url; // fallback kalau popup diblok
+        }
+
+        function openProdukDigital() {
+            playClick();
+            toggleSidebar();
+
+            const url = 'https://produk-digital-kzrizusmo.vercel.app';
+            const win = window.open(url, '_blank');
+            if (!win) window.location.href = url; // fallback kalau popup diblok
+        }
+
 
         function navTo(page) {
     playClick();
