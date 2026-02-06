@@ -1,0 +1,2784 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="referrer" content="no-referrer">
+
+    <title>KZRIZUSMO STORE - Marketplace V2.1</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+    /* Biar konten gak ketiban status bar APK */
+body {
+    padding-top: max(0px, env(safe-area-inset-top));
+}
+
+header {
+  padding: 0px 20px 15px;
+}
+    /* ============================= */
+/*        DESKTOP MODE           */
+/* ============================= */
+body.desktop-mode {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+body.desktop-mode .app-grid {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+body.desktop-mode .banner-container {
+  max-width: 1100px;
+  margin: 20px auto;
+}
+
+body.desktop-mode header {
+  position: sticky;
+}
+
+body.desktop-mode .container {
+  padding-top: 12px;
+}
+        :root {
+            --primary: #ff0000;
+            --accent-gold: #ffd700;
+            --accent-blue: #00bcd4;
+            --accent-green: #00ff7f;
+            --bg-body: #050505;
+            --bg-card: #121212;
+            --bg-sec: #1a1a1a;
+            --text-main: #ffffff;
+            --text-sec: #aaaaaa;
+            --border: #2a2a2a;
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-mode {
+            --bg-body: #f4f4f4;
+            --bg-card: #ffffff;
+            --bg-sec: #ffffff;
+            --text-main: #000000;
+            --text-sec: #555555;
+            --border: #e0e0e0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 100px;
+        }
+
+        /* --- INTRO ANIMATION --- */
+        #introOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        .intro-logo { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary); margin-bottom: 20px; animation: pulse 2s infinite; object-fit: cover;}
+        .intro-text { font-weight: 900; letter-spacing: 2px; color: white; }
+        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,0,0,0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255,0,0,0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,0,0,0); } }
+
+        /* --- SHINY ANIMATION (V12 STYLE + DELAY 4s) --- */
+        @keyframes glassSweep { 
+            0% { left: -100%; } 
+            20% { left: 200%; } 
+            100% { left: 200%; } 
+        }
+        
+        .shiny-effect { position: relative; overflow: hidden; cursor: pointer; transition: transform 0.1s; }
+        .shiny-effect:active { transform: scale(0.97); } 
+        .shiny-effect::after { 
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; 
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent); 
+            transition: none; animation: glassSweep 4s infinite linear; pointer-events: none;
+        }
+
+        /* --- HEADER --- */
+        header {
+    padding: 10px 20px 10px; /* ⬅ atas ditambah */
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    background: var(--bg-card); 
+    position: sticky; 
+    top: 0; 
+    z-index: 100;
+    box-shadow: 0 2px 10px var(--shadow); 
+    border-bottom: 2px solid var(--primary);
+}
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .burger-btn { font-size: 1.5rem; cursor: pointer; color: var(--text-main); display: block; z-index: 101; pointer-events: auto; } 
+        .header-title h1 { font-size: 1.2rem; font-weight: 900; line-height: 1; letter-spacing: 1px; }
+        .header-title span { color: var(--primary); }
+        .header-subtitle { font-size: 0.65rem; color: var(--text-sec); letter-spacing: 2px; font-weight: bold; margin-top: 2px; display: block;}
+        .header-logo { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; cursor: pointer; }
+
+        /* --- SIDEBAR MENU --- */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 260px;
+    height: 100%;
+    padding-top: 0px; /* ⬅ BIAR TURUN DARI STATUS BAR */
+    background: var(--bg-card);
+    z-index: 999;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+        .sidebar.active { left: 0; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .sidebar-title { font-weight: bold; font-size: 1.2rem; }
+        .sidebar-close { font-size: 1.2rem; cursor: pointer; }
+        .sidebar-menu { padding: 20px 10px; flex: 1; overflow-y: auto; }
+        .sidebar-item { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 5px; border-radius: 10px; cursor: pointer; color: var(--text-main); font-weight: 600; transition: 0.2s; }
+        .sidebar-item:hover, .sidebar-item.active { background: var(--primary); color: white; }
+
+        /* --- BANNER --- */
+.banner-container { 
+    width: 100%; 
+    height: auto; 
+    margin-bottom: 20px; 
+    overflow: hidden; 
+    position: relative; 
+    border-radius: 12px;
+    box-shadow: 0 4px 10px var(--shadow);
+}
+
+.banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+}
+/* ===== BANNER SLIDER (FIX) ===== */
+.banner-track {
+  display: flex;
+  width: 100%; /* 4 banner */
+  animation: bannerSlide 20s infinite;
+}
+
+.banner-item {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.banner-item a {
+  display: block;
+}
+
+@keyframes bannerSlide {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(0); }
+
+  25%  { transform: translateX(-100%); }
+  45%  { transform: translateX(-100%); }
+
+  50%  { transform: translateX(-200%); }
+  70%  { transform: translateX(-200%); }
+
+  75%  { transform: translateX(-300%); }
+  100% { transform: translateX(-300%); }
+}
+
+        /* --- SEARCH BAR --- */
+        .search-container { padding: 0 20px 15px 20px; position: relative; z-index: 10; }
+        .search-input { width: 100%; padding: 12px 15px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); font-size: 0.9rem; transition: 0.3s; }
+        .search-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 10px rgba(255,0,0,0.3); }
+
+        /* --- FILTER BUTTONS --- */
+        .filter-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 0 20px 15px 20px; scrollbar-width: none; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+        .filter-scroll::-webkit-scrollbar { display: none; }
+        .filter-btn { flex-shrink: 0; padding: 8px 20px; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-sec); font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(255,0,0,0.3); }
+
+        /* --- SECTIONS --- */
+        .section-header { padding: 0 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; margin-top: 20px; }
+        .section-title { font-size: 1.1rem; font-weight: 800; border-left: 4px solid var(--primary); padding-left: 10px; }
+        
+        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; padding: 0 20px 20px 20px; }
+        
+        /* --- ITEM CARD --- */
+        .item-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 12px; display: flex; flex-direction: column; align-items: center; text-align: center;
+            position: relative; overflow: hidden; height: 100%;
+        }
+        
+        .item-card img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .item-title { font-size: 0.85rem; font-weight: 700; line-height: 1.3; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .badge-ribbon {
+            position: absolute; top: 0; right: 0;
+            background: var(--accent-gold); color: black;
+            font-size: 0.55rem; font-weight: 900;
+            padding: 3px 8px; border-bottom-left-radius: 8px; z-index: 2;
+        }
+        .badge-populer { background: var(--primary); color: white; }
+
+        /* --- PRODUCT DETAILS MODAL --- */
+        .modal-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 2000; overflow-y: auto; display: none; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .modal-header { position: sticky; top: 0; background: var(--bg-card); padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); z-index: 10; }
+        .back-icon { font-size: 1.2rem; cursor: pointer; }
+        .modal-content { padding: 20px; max-width: 800px; margin: 0 auto; }
+        
+        .package-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 15px; position: relative; overflow: hidden; }
+        .pkg-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: pointer; }
+        .pkg-left { flex: 1; }
+        .pkg-name { font-weight: bold; font-size: 1rem; display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
+        .pkg-price { color: var(--primary); font-weight: 900; font-size: 1.1rem; display: block; margin-top: 5px; }
+        .pkg-body { display: none; margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 10px; }
+        .pkg-body.show { display: block; }
+        
+        /* RESTORED SHINY TAGS (V12 STYLE) */
+        .tag-shiny {
+            font-size: 0.6rem; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; font-weight: 900; color: #000;
+            display: inline-block; position: relative; overflow: hidden; vertical-align: middle;
+        }
+        .tag-shiny::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.8), transparent); animation: glassSweep 2.5s infinite linear; }
+        
+        .tag-gold { background: linear-gradient(135deg, #d4af37, #f7ef8a); box-shadow: 0 0 5px rgba(212, 175, 55, 0.5); }
+        .tag-blue { background: linear-gradient(135deg, #00bcd4, #8affff); box-shadow: 0 0 5px rgba(0, 188, 212, 0.5); }
+        .tag-green { background: linear-gradient(135deg, #00ff7f, #adffc9); box-shadow: 0 0 5px rgba(0, 255, 127, 0.5); }
+
+        .warranty-label { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; display: inline-block; margin-top: 3px; }
+        .w-yes { background: rgba(0, 255, 127, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); }
+        .w-no { background: rgba(255, 68, 68, 0.15); color: #ff4444; border: 1px solid #ff4444; }
+
+        .pkg-list li { list-style: none; font-size: 0.85rem; color: var(--text-sec); margin-bottom: 5px; display: flex; gap: 8px; }
+        .pkg-list li i { color: var(--accent-green); width: 15px; text-align: center; }
+        .save-info { display: block; font-size: 0.85rem; color: var(--accent-green); margin-bottom: 8px; font-weight: bold; background: rgba(0,255,127,0.1); padding: 5px 10px; border-radius: 5px; border-left: 3px solid var(--accent-green); }
+
+        .btn-animated { background: var(--primary); color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; margin-top: 10px; }
+
+        /* --- COMING SOON --- */
+        .coming-soon { text-align: center; padding: 40px 20px; border: 2px dashed var(--border); border-radius: 15px; margin: 0 20px; background: rgba(255,255,255,0.02); }
+
+        /* --- FOOTER & TESTI --- */
+        .floating-home { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-card); border: 2px solid var(--primary); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 900; }
+
+        footer { text-align: center; padding: 30px 20px 100px 20px; background: var(--bg-sec); margin-top: 30px; }
+        .testi-track-container { width: 100%; overflow: hidden; mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
+        .testi-track { display: flex; gap: 15px; width: max-content; animation: scroll 120s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        
+        .testi-card { width: 300px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 15px; flex-shrink: 0; position: relative; text-align: left;}
+        .testi-user-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .user-avatar { width: 35px; height: 35px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1rem; flex-shrink: 0;}
+        .user-info { display: flex; flex-direction: column; justify-content: center; flex: 1; overflow: hidden;}
+        .user-info h4 { font-size: 0.9rem; margin: 0; color: var(--text-main); font-weight: bold; }
+        .user-info span { font-size: 0.75rem; color: var(--text-sec); }
+        .stars { color: #ffd700; font-size: 0.8rem; margin-bottom: 8px; }
+        .testi-text { font-size: 0.9rem; color: var(--text-sec); font-style: italic; line-height: 1.4; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        .socials { display: flex; justify-content: center; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+        .soc-btn { 
+            width: 50px; height: 50px; border-radius: 50%; 
+            background: var(--bg-card); border: 2px solid var(--border); 
+            display: flex; align-items: center; justify-content: center; 
+            color: var(--text-main); font-size: 1.5rem; text-decoration: none; 
+            transition: 0.3s;
+        }
+        .soc-btn:hover { background: var(--primary); color: white; box-shadow: 0 0 15px var(--primary); border-color: var(--primary); transform: translateY(-5px); }
+
+        /* ALL PRODUCTS LIST STYLE */
+        .controls-row { display: flex; gap: 10px; margin-bottom: 15px; position: relative; z-index: 20; padding: 0 20px;}
+        .control-btn { flex: 1; padding: 12px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); border-radius: 8px; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; }
+        
+        .filter-drawer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: rgba(255,255,255,0.02); border-radius: 10px; margin: 0 20px 10px 20px; }
+        .filter-drawer.open { border: 1px solid var(--border-color); padding: 15px; }
+        .sort-dropdown { display: none; width: 100%; background: var(--bg-card); border: 2px solid var(--primary); border-radius: 8px; margin-top: 5px; position: absolute; top: 100%; left: 0; z-index: 50; padding: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.9); }
+        .sort-option { padding: 10px; cursor: pointer; border-bottom: 1px solid var(--border); }
+        
+        .list-item { display: flex; align-items: center; gap: 15px; background: var(--bg-card); border: 1px solid var(--border); padding: 15px; margin: 0 20px 10px 20px; border-radius: 12px; }
+        .list-img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; }
+        .list-info { flex: 1; }
+        .list-name { font-weight: bold; font-size: 0.9rem; color: var(--text-main); }
+        .list-price { color: var(--primary); font-weight: 900; font-size: 1rem; }
+        .list-btn { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; font-size: 0.8rem; cursor: pointer; }
+
+        .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .filter-chip { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); font-size: 0.8rem; cursor: pointer; }
+        .filter-chip.active { background: var(--primary); color: white; }
+        
+        /* KUNCI KONTEN BIAR GA KETIBAN STATUS BAR */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.container {
+  padding-top: 12px;
+}
+body.product-detail,
+body.product-page {
+    padding-top: 0px;
+}
+    </style>
+</head>
+<body>
+<div class="statusbar-space"></div>
+  <div class="app-wrapper">
+
+    <div id="introOverlay" onclick="openApp()">
+    <img src="https://img1.pixhost.to/images/11283/677288085_miwamikadono.jpg" class="intro-logo">
+    <div class="intro-text">KZRIZUSMO STORE</div>
+    <small style="margin-top:10px; color:#aaa;">Tap untuk masuk</small>
+</div>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">MENU</div>
+            <div class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></div>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-item shiny-effect" onclick="navTo('home')"><i class="fas fa-home"></i> Home</div>
+            <div class="sidebar-item shiny-effect" onclick="navTo('app-page')"><i class="fas fa-crown"></i> Aplikasi Premium</div>
+            <div class="sidebar-item shiny-effect" onclick="navTo('sosmed-page')"><i class="fas fa-rocket"></i> Suntik Sosmed</div>
+            <div class="sidebar-item shiny-effect" onclick="navTo('all-products')"><i class="fas fa-search"></i> Semua Produk</div>
+            <div class="sidebar-item shiny-effect" onclick="toggleMode()"><i class="fas fa-adjust"></i> Dark/Light Mode</div>
+            <div class="sidebar-item shiny-effect" onclick="toggleDesktopMode()" id="desktopBtn">
+    <i class="fas fa-desktop"></i> Desktop Mode
+</div>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="burger-btn shiny-effect" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+            <div class="header-title">
+                <h1>KZRIZUSMO <span>STORE</span></h1>
+                <span class="header-subtitle">MARKETPLACE V2.1</span>
+            </div>
+        </div>
+        <img src="https://img1.pixhost.to/images/11283/677288085_miwamikadono.jpg" class="header-logo shiny-effect" onclick="window.open('https://wa.me/6289515092009')">
+    </header>
+
+    <div class="container" id="mainContainer">
+        
+        <div id="page-home" class="page-section">
+<!-- BANNER SLIDER UTAMA -->
+<div class="banner-container">
+  <div class="banner-track">
+
+    <!-- Banner 1 (TIDAK KLIK) -->
+    <div class="banner-item">
+      <img src="https://img1.pixhost.to/images/11283/677288053_ochobot.jpg" class="banner-img">
+    </div>
+    
+        <!-- Banner 2 (TIDAK KLIK) -->
+    <div class="banner-item">
+      <img src="https://files.catbox.moe/7j7q60.jpg" class="banner-img">
+    </div>
+
+    <!-- Banner 3 (TIDAK KLIK) -->
+    <div class="banner-item">
+      <img src="https://img1.pixhost.to/images/11620/685027953_miwamikadono.jpg" class="banner-img">
+    </div>
+
+    <!-- Banner 4 (KLIK WA) -->
+    <div class="banner-item">
+      <a href="https://wa.me/6289515092009?text=Hallo%20min%20saya%20mau%20join%20reseller%20app%20premium%20nya%20bisa?" target="_blank">
+        <img src="https://img1.pixhost.to/images/11620/685027951_miwamikadono.jpg" class="banner-img">
+      </a>
+    </div>
+
+  </div>
+</div>
+            <div class="search-container" style="margin-top: 20px;">
+                <input type="text" class="search-input" placeholder="Cari nama aplikasi..." onkeyup="filterAppList(this.value)">
+            </div>
+
+  <div class="filter-scroll">
+    <div class="filter-btn shiny-effect active" onclick="setFilter('populer', this)">Populer</div>
+    <div class="filter-btn shiny-effect" onclick="setFilter('editing', this)">Editing</div>
+    <div class="filter-btn shiny-effect" onclick="setFilter('streaming', this)">Streaming</div>
+    <div class="filter-btn shiny-effect" onclick="setFilter('music', this)">Music</div>
+    <div class="filter-btn shiny-effect" onclick="setFilter('ai', this)">AI</div>
+    <div class="filter-btn shiny-effect" onclick="setFilter('vpn', this)">VPN</div> </div>
+
+            <div id="filterResults" style="margin-top: 15px;">
+                </div>
+
+            <div id="appSection">
+                <div class="section-header">
+                    <div class="section-title">Semua Aplikasi Premium</div>
+                </div>
+                <div id="fullAppGrid" class="app-grid">
+                    </div>
+            </div>
+
+            <div id="sosmedSection" style="margin-top: 30px;">
+                <div class="section-header">
+                    <div class="section-title">Suntik Sosmed</div>
+                </div>
+                <div class="coming-soon" onclick="window.open('https://kzrizusmoss.netlify.app/', '_blank')" style="cursor:pointer;">
+    <h3>OPEN</h3>
+    <p style="color:var(--text-sec)">klik open. </p>
+</div>
+            </div>
+
+        </div>
+
+        <div id="page-app" class="page-section" style="display:none;">
+            <div class="section-header">
+                <div class="section-title">Semua Aplikasi Premium</div>
+            </div>
+            <div id="pageAppGrid" class="app-grid"></div>
+        </div>
+
+<div id="page-sosmed" class="page-section" style="display:none;">
+    <div class="section-header">
+        <div class="section-title">Suntik Sosmed</div>
+    </div>
+    <div class="coming-soon" onclick="window.open('https://kzrizusmoss.netlify.app/', '_blank')" style="cursor:pointer;">
+        <h3>OPEN</h3>
+        <p style="color:var(--text-sec)">klik open.</p>
+    </div>
+</div>
+
+        <div id="page-all-products" class="page-section" style="display:none;">
+            <div class="section-header" style="margin-top: 20px;">
+                <div class="section-title">Cari & Filter</div>
+            </div>
+            
+            <div class="controls-row">
+                <div style="flex:1; position:relative;">
+                    <div class="control-btn shiny-effect" onclick="toggleSortMenu()">
+                        <i class="fas fa-sort-amount-down"></i> Urutkan
+                    </div>
+                    <div id="sortMenu" class="sort-dropdown">
+                        <div class="sort-option" onclick="setSort('abjad')">Abjad (A-Z)</div>
+                        <div class="sort-option" onclick="setSort('murah')">Termurah</div>
+                        <div class="sort-option" onclick="setSort('mahal')">Termahal</div>
+                    </div>
+                </div>
+                <div class="control-btn shiny-effect" onclick="toggleFilterDrawer()">
+                    <i class="fas fa-filter"></i> Filter
+                </div>
+            </div>
+
+            <div id="filterDrawer" class="filter-drawer">
+                <p style="color:var(--text-sec); font-size:0.8rem; margin-bottom:5px;">Kategori</p>
+                <div class="chip-container">
+                    <div class="filter-chip active" onclick="toggleFilter(this, 'cat', 'all')">Semua</div>
+                    <div class="filter-chip" onclick="toggleFilter(this, 'cat', 'app')">App Premium</div>
+                    <div class="filter-chip" onclick="toggleFilter(this, 'cat', 'sosmed')">Suntik Sosmed</div>
+                </div>
+                
+                <p style="color:var(--text-sec); font-size:0.8rem; margin-bottom:5px; margin-top:10px;">Range Harga</p>
+                <div class="chip-container">
+                    <div class="filter-chip" onclick="toggleFilter(this, 'price', 'low')">< 10k</div>
+                    <div class="filter-chip" onclick="toggleFilter(this, 'price', 'mid')">10k - 25k</div>
+                    <div class="filter-chip" onclick="toggleFilter(this, 'price', 'high')">> 25k</div>
+                </div>
+
+                <p style="color:var(--text-sec); font-size:0.8rem; margin-bottom:5px; margin-top:10px;">Spesial</p>
+                <div class="chip-container">
+                    <div class="filter-chip" onclick="toggleFilter(this, 'tag', 'best')">Best Seller</div>
+                    <div class="filter-chip" onclick="toggleFilter(this, 'tag', 'bulk')">Hemat/Bulk</div>
+                    <div class="filter-chip" onclick="toggleFilter(this, 'warranty', 'yes')">Bergaransi</div>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Ketik nama paket..." onkeyup="renderAllProducts(this.value)">
+            </div>
+            <div id="allProductList"></div>
+        </div>
+
+        <footer>
+            <h3 style="margin-bottom: 20px;">Apa Kata Mereka?</h3>
+            <div class="testi-section">
+                <div class="testi-track-container">
+                    <div class="testi-track" id="testiTrack"></div>
+                </div>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="https://www.instagram.com/p/DJgmx4oRlNR/?igsh=MTk2eXFheTh6cXc3Nw==" target="_blank" class="testi-link-btn" style="border:1px solid var(--primary); padding:5px 15px; border-radius:20px; text-decoration:none; color:var(--primary); font-size:0.8rem;">Lihat Bukti di Instagram <i class="fas fa-external-link-alt"></i></a>
+                </div>
+            </div>
+            
+            <div class="socials">
+    <a href="https://wa.me/6289515092009" target="_blank" class="soc-btn shiny-effect">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <a href="https://tiktok.com/@kzrizusmo" target="_blank" class="soc-btn shiny-effect">
+        <i class="fab fa-tiktok"></i>
+    </a>
+    <a href="https://instagram.com/kzrizusmo.market" target="_blank" class="soc-btn shiny-effect">
+        <i class="fab fa-instagram"></i>
+    </a>
+</div>
+            <p style="margin-top: 30px; font-size: 0.8rem; color: var(--text-sec);">© 2025 kzrizusmo Store V2.1</p>
+        </footer>
+
+    </div>
+
+    <div class="floating-home shiny-effect" onclick="resetHome()">
+        <i class="fas fa-home"></i>
+    </div>
+
+    <div id="detailModal" class="modal-page">
+        <div class="modal-header">
+            <div class="back-icon" onclick="closeModal()"><i class="fas fa-arrow-left"></i></div>
+            <h2 id="modalTitle" style="font-size: 1.1rem;">Detail Produk</h2>
+        </div>
+        <div class="modal-content" id="modalBody"></div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playClick() {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(1200, audioCtx.currentTime); 
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+    </script>
+
+    <script>
+        // --- DATA PRODUK V2.1 ---
+                const appsData = [
+            {
+                id: 'canva',
+                name: 'Canva',
+                image: 'https://files.catbox.moe/4omm5s.jpg',
+                cat: ['app', 'editing', 'populer'],
+                packages: [
+                    // SERVER 1 — MEMBER
+                    { name: "Server 1 • Member 1 Bulan", price: "Rp 6.000", priceVal: 6000 },
+                    { name: "Server 1 • Member 3 Bulan", price: "Rp 8.000", priceVal: 8000 },
+                    { name: "Server 1 • Member 6 Bulan", price: "Rp 10.000", priceVal: 10000 },
+                    { name: "Server 1 • Member 1 Tahun", price: "Rp 12.000", priceVal: 12000 },
+                    { name: "Server 1 • Member Lifetime", price: "Rp 15.000", priceVal: 15000 },
+                    { name: "Server 1 • Brand Kit Add-on", price: "Rp 1.000", priceVal: 1000 },
+
+    // SERVER 2 — PRIVATE
+    { name: "Server 2 • Private Member 1 Bulan", price: "Rp 6.500", priceVal: 6500 },
+    { name: "Server 2 • Private Member 2 Bulan", price: "Rp 7.000", priceVal: 7000 },
+    { name: "Server 2 • Admin 1 Bulan", price: "Rp 12.000", priceVal: 12000 },
+    { name: "Server 2 • Edu Lifetime", price: "Rp 11.000", priceVal: 11000 },
+    { name: "Server 2 • Owner 1 Bulan", price: "Rp 14.000", priceVal: 14000 },
+
+    // SERVER 3
+    { name: "Server 3 • Member 1 Bulan", price: "Rp 6.500", priceVal: 6500 },
+    { name: "Server 3 • Owner 1 Bulan", price: "Rp 12.000", priceVal: 12000 },
+    { name: "Server 3 • Edu Lifetime", price: "Rp 9.000", priceVal: 9000 },
+    { name: "Server 3 • Edu Lifetime G6B", price: "Rp 11.000", priceVal: 11000 },
+    { name: "Server 3 • Member 1 Tahun", price: "Rp 11.000", priceVal: 11000 },
+
+    // SERVER 4
+    { name: "Server 4 • Member 1 Bulan", price: "Rp 8.000", priceVal: 8000 },
+    { name: "Server 4 • Private Permanen", price: "Rp 18.000", priceVal: 18000 }
+
+  ]
+},
+   { 
+    id: 'capcut', 
+    name: 'CapCut', 
+    image: 'https://iili.io/fR1n5B9.png', 
+    cat: ['app', 'populer', 'editing'], 
+    packages: [
+        // SERVER 1
+        { name: "Capcut Server 1 - Invite 1 Minggu", price: "Rp 10.000", priceVal: 10000, tag: "srv1", tagName: "SERVER 1", desc: [] },
+        { name: "Capcut Server 1 - Private 1 Minggu", price: "Rp 12.000", priceVal: 12000, tag: "srv1", tagName: "SERVER 1", desc: [] },
+        { name: "Capcut Server 1 - Sharing 1 Bulan", price: "Rp 14.000", priceVal: 14000, tag: "srv1", tagName: "SERVER 1", desc: [] },
+        { name: "Capcut Server 1 - Private 1 Bulan", price: "Rp 26.000", priceVal: 26000, tag: "srv1", tagName: "SERVER 1", desc: [] },
+        
+        // SERVER 2
+        { name: "Capcut Server 2 - Private Buyer 7 Hari", price: "Rp 8.500", priceVal: 8500, tag: "srv2", tagName: "SERVER 2", desc: [] },
+        { name: "Capcut Server 2 - Private Seller 7 Hari", price: "Rp 8.500", priceVal: 8500, tag: "srv2", tagName: "SERVER 2", desc: [] },
+        { name: "Capcut Server 2 - Private Seller 35 Hari", price: "Rp 11.500", priceVal: 11500, tag: "srv2", tagName: "SERVER 2", desc: [] },
+
+        // SERVER 4
+        { name: "Capcut Server 4 - Private 7 Hari", price: "Rp 12.000", priceVal: 12000, tag: "srv4", tagName: "SERVER 4", desc: [] },
+        { name: "Capcut Server 4 - Private G14H 35 Hari", price: "Rp 18.000", priceVal: 18000, tag: "srv4", tagName: "SERVER 4", desc: [] },
+        { name: "Capcut Server 4 - Private FullGar 35 Hari", price: "Rp 21.000", priceVal: 21000, tag: "srv4", tagName: "SERVER 4", desc: [] },
+        { name: "Capcut Server 4 - Private 2 Akun FullGar 35 Hari", price: "Rp 29.000", priceVal: 29000, tag: "srv4", tagName: "SERVER 4", desc: [] }
+    ]
+},{
+  id: 'alightmotion',
+  name: 'Alight Motion',
+  image: 'https://files.catbox.moe/3v9hsy.jpg',
+  cat: ['app','editing'],
+  packages: [
+    { name: "S1 • Sharing 1 Tahun", price: "Rp 10.000", priceVal: 10000 },
+    { name: "S1 • Private 1 Tahun", price: "Rp 15.000", priceVal: 15000 },
+    { name: "S2 • Private Email Generator 1 Tahun", price: "Rp 6.500", priceVal: 6500 },
+    { name: "S3 • Private Seller 2 Akun 1 Tahun", price: "Rp 8.500", priceVal: 8500 },
+    { name: "S4 • Private 1 Tahun", price: "Rp 12.000", priceVal: 12000 },
+    { name: "S4 • Bulk 50 Akun Private", price: "Rp 46.000", priceVal: 46000 }
+  ]
+},
+
+{
+  id: 'spotify',
+  name: 'Spotify',
+  image: 'https://iili.io/f5n4Szx.png',
+  cat: ['app','music','populer'],
+  packages: [
+    { name: "S1 • Private 1 Bulan", price: "Rp 20.000", priceVal: 20000 },
+    { name: "S1 • Private 2 Bulan", price: "Rp 30.000", priceVal: 30000 },
+    { name: "S2 • Private 1 Bulan [1x24]", price: "Rp 12.000", priceVal: 12000 },
+    { name: "S2 • Private 1 Bulan [30x24]", price: "Rp 21.000", priceVal: 21000 },
+    { name: "S3 • Student 1 Bulan", price: "Rp 14.000", priceVal: 14000 },
+    { name: "S3 • Student Full Gar 1 Bulan", price: "Rp 18.000", priceVal: 18000 },
+    { name: "S3 • Student Full Gar 3 Bulan", price: "Rp 35.500", priceVal: 35500 },
+    { name: "S3 • Family 1 Bulan", price: "Rp 19.500", priceVal: 19500 },
+    { name: "S3 • Family Premium 1 Bulan", price: "Rp 31.500", priceVal: 31500 },
+    { name: "S4 • Private 1 Bulan", price: "Rp 16.000", priceVal: 16000 }
+  ]
+},
+
+{
+  id: 'bstation',
+  name: 'BStation',
+  image: 'https://iili.io/f5n4UWQ.jpg',
+  cat: ['streaming'],
+  packages: [
+    { name: "S1 • Sharing 1 Bulan", price: "Rp 12.000", priceVal: 12000 },
+    { name: "S1 • Private 1 Bulan", price: "Rp 32.000", priceVal: 32000 },
+    { name: "S1 • Sharing 3 Bulan", price: "Rp 15.000", priceVal: 15000 },
+    { name: "S1 • Sharing 1 Tahun", price: "Rp 32.000", priceVal: 32000 },
+    { name: "S1 • Private 1 Tahun", price: "Rp 157.000", priceVal: 157000 },
+    { name: "S3 • Sharing 1 Bulan", price: "Rp 12.000", priceVal: 12000 }
+  ]
+},
+
+{
+  id: 'scribd',
+  name: 'Scribd',
+  image: 'https://iili.io/f5n4gsV.png',
+  cat: ['app','education'],
+  packages: [
+    { name: "S1 • Sharing 1 Bulan", price: "Rp 13.000", priceVal: 13000 },
+    { name: "S1 • Private 1 Bulan", price: "Rp 18.000", priceVal: 18000 }
+  ]
+},
+
+{
+  id: 'iqiyi',
+  name: 'iQIYI',
+  image: 'https://iili.io/fR1no7f.webp',
+  cat: ['streaming'],
+  packages: [
+    { name: "S1 • Sharing 1 Bulan", price: "Rp 13.000", priceVal: 13000 },
+    { name: "S1 • Sharing Anti Limit 1 Bulan", price: "Rp 22.000", priceVal: 22000 },
+    { name: "S1 • Private 1 Bulan", price: "Rp 34.000", priceVal: 34000 },
+    { name: "S1 • Sharing 1 Tahun", price: "Rp 21.000", priceVal: 21000 },
+    { name: "S3 • Sharing Premium 1 Bulan", price: "Rp 13.000", priceVal: 13000 },
+    { name: "S3 • Sharing Premium 3 Bulan", price: "Rp 15.000", priceVal: 15000 },
+    { name: "S3 • Sharing Premium 1 Tahun", price: "Rp 19.000", priceVal: 19000 },
+    { name: "S3 • Sharing Standar 1 Bulan", price: "Rp 12.000", priceVal: 12000 },
+    { name: "S3 • Sharing Standar 3 Bulan", price: "Rp 14.000", priceVal: 14000 },
+    { name: "S3 • Sharing Standar 1 Tahun", price: "Rp 16.000", priceVal: 16000 }
+  ]
+},
+
+{
+  id: 'viu',
+  name: 'VIU',
+  image: 'https://iili.io/fR1nTI2.png',
+  cat: ['streaming'],
+  packages: [
+    { name: "S1 • Private Seller 1 Bulan", price: "Rp 6.000", priceVal: 6000 },
+    { name: "S1 • Private Seller 2 Bulan", price: "Rp 8.000", priceVal: 8000 },
+    { name: "S1 • Private Seller 3 Bulan", price: "Rp 10.000", priceVal: 10000 },
+    { name: "S1 • Private Seller 6 Bulan", price: "Rp 11.000", priceVal: 11000 },
+    { name: "S1 • Private Seller 1 Tahun", price: "Rp 14.000", priceVal: 14000 },
+    { name: "S2 • Sharing Permanen", price: "Rp 6.500", priceVal: 6500 },
+    { name: "S3 • Private 1 Bulan", price: "Rp 6.700", priceVal: 6700 },
+    { name: "S3 • Private Lifetime", price: "Rp 12.000", priceVal: 12000 },
+    { name: "S4 • Private 1 Tahun", price: "Rp 8.000", priceVal: 8000 },
+    { name: "S4 • Private Lifetime", price: "Rp 11.000", priceVal: 11000 }
+  ]
+},
+
+{
+  id: 'primevideo',
+  name: 'Prime Video',
+  image: 'https://iili.io/fR1nBgs.png',
+  cat: ['streaming'],
+  packages: [
+    { name: "S1 • Sharing 1 Bulan", price: "Rp 12.000", priceVal: 12000 },
+    { name: "S1 • Private 1 Bulan", price: "Rp 18.000", priceVal: 18000 },
+    { name: "S2 • Sharing 1 Bulan", price: "Rp 8.000", priceVal: 8000 },
+    { name: "S2 • Private 1 Bulan", price: "Rp 13.000", priceVal: 13000 },
+    { name: "S4 • Private 1 Bulan", price: "Rp 20.000", priceVal: 20000 }
+  ]
+},
+
+{
+  id: 'zoom',
+  name: 'Zoom',
+  image: 'https://iili.io/fR1nxe4.jpg',
+  cat: ['app','meeting'],
+  packages: [
+    { name: "S1 • Private 100 Peserta 2 Minggu", price: "Rp 15.000", priceVal: 15000 },
+    { name: "S1 • Private 100 Peserta 1 Bulan", price: "Rp 25.000", priceVal: 25000 },
+    { name: "S4 • Private 14 Hari", price: "Rp 15.000", priceVal: 15000 }
+  ]
+},
+
+{
+  id: 'chatgpt',
+  name: 'ChatGPT',
+  image: 'https://iili.io/fR1nAL7.png',
+  cat: ['ai'],
+  packages: [
+    { name: "S1 • Sharing 1 Bulan", price: "Rp 26.000", priceVal: 26000 },
+    { name: "S1 • Private 1 Bulan", price: "Rp 30.000", priceVal: 30000 },
+    { name: "S2 • Private Plus 1 Bulan", price: "Rp 21.000", priceVal: 21000 },
+    { name: "S3 • Plus 1 Bulan", price: "Rp 15.000", priceVal: 15000 },
+    { name: "S3 • Plus Full Garansi", price: "Rp 24.000", priceVal: 24000 },
+    { name: "S3 • Invite 7 Hari", price: "Rp 13.000", priceVal: 13000 },
+    { name: "S3 • Invite Full Garansi", price: "Rp 19.000", priceVal: 19000 },
+    { name: "S3 • Head 7 Hari", price: "Rp 22.000", priceVal: 22000 },
+    { name: "S3 • Head Full Garansi", price: "Rp 34.000", priceVal: 34000 },
+    { name: "S3 • GO 1 Tahun", price: "Rp 21.000", priceVal: 21000 },
+    { name: "S4 • Sharing 1 Bulan", price: "Rp 31.000", priceVal: 31000 },
+    { name: "S4 • Private Plus 1 Bulan", price: "Rp 66.000", priceVal: 66000 },
+    { name: "S4 • Private GO 1 Tahun", price: "Rp 71.000", priceVal: 71000 }
+  ]
+},
+
+{
+  id: 'lightroom',
+  name: 'Lightroom',
+  image: 'https://iili.io/fR1nuXS.png', 
+  cat: ['app','editing'],
+  packages: [
+    { name: "S1 • Sharing 1 Tahun", price: "Rp 15.000", priceVal: 15000 },
+    { name: "S3 • Sharing 1 Tahun", price: "Rp 15.000", priceVal: 15000 },
+    { name: "S4 • Premium 1 Tahun", price: "Rp 46.000", priceVal: 46000 }
+  ]
+}, 
+
+{
+  id: 'netflix',
+  name: 'Netflix',
+  image: 'https://c.termai.cc/i190/7TyHs.jpg',
+  cat: ['app','populer','streaming'],
+  packages: [
+
+    // SERVER 1
+    { name: "S1 • 1 Profil 1 User • 1 Bulan", price: "Rp 36.000", priceVal: 36000 },
+    { name: "S1 • 1 Profil 1 User • 2 Bulan", price: "Rp 64.000", priceVal: 64000 },
+    { name: "S1 • 1 Profil 1 User • 3 Bulan", price: "Rp 95.000", priceVal: 95000 },
+
+    { name: "S1 • 1 Profil 2 User • 1 Bulan", price: "Rp 21.000", priceVal: 21000 },
+    { name: "S1 • 1 Profil 2 User • 2 Bulan", price: "Rp 38.000", priceVal: 38000 },
+    { name: "S1 • 1 Profil 2 User • 3 Bulan", price: "Rp 52.000", priceVal: 52000 },
+
+    { name: "S1 • 1 Akun 5 Profil • 1 Bulan", price: "Rp 150.000", priceVal: 150000 },
+
+    // SERVER 2
+    { name: "S2 • Private • 1 Bulan", price: "Rp 130.000", priceVal: 130000 },
+
+    // SERVER 3
+    { name: "S3 • 1 Profil 1 User • 1 Hari", price: "Rp 10.000", priceVal: 10000 },
+    { name: "S3 • 1 Profil 1 User • 1 Minggu", price: "Rp 15.500", priceVal: 15500 },
+    { name: "S3 • 1 Profil 1 User • 1 Bulan", price: "Rp 24.000", priceVal: 24000 },
+
+    { name: "S3 • 1 Profil 2 User • 1 Hari", price: "Rp 9.000", priceVal: 9000 },
+    { name: "S3 • 1 Profil 2 User • 1 Minggu", price: "Rp 14.500", priceVal: 14500 },
+    { name: "S3 • 1 Profil 2 User • 1 Bulan", price: "Rp 19.500", priceVal: 19500 },
+
+    { name: "S3 • Private • 1 Bulan", price: "Rp 33.500", priceVal: 33500 },
+    { name: "S3 • 1 Profil 2 User • 1 Tahun", price: "Rp 96.000", priceVal: 96000 }
+  ]
+  }, 
+  
+  {
+    id: 'disney',
+    name: 'Disney',
+    image: 'https://img1.pixhost.to/images/11266/676898488_ochobot.jpg',
+    cat: ['streaming','populer'],
+    packages: [
+      // SERVER 1
+      { name: "Disney Server 1 - 1 Bulan - 6 User", price: "Rp 33.000", priceVal: 33000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "6 User"] },
+      { name: "Disney Server 1 - 1 Bulan - 3 User Anti Limit", price: "Rp 55.000", priceVal: 55000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "3 User Anti Limit"] },
+
+      // SERVER 3 (Sharing + Durasi 1 Bulan)
+      { name: "Disney Server 3 - Sharing 1 Hari", price: "Rp 9.000", priceVal: 9000, tag: "srv3", tagName: "SERVER 3", desc: ["Sharing", "1 Hari"] },
+      { name: "Disney Server 3 - Sharing 3 Hari", price: "Rp 12.000", priceVal: 12000, tag: "srv3", tagName: "SERVER 3", desc: ["Sharing", "3 Hari"] },
+      { name: "Disney Server 3 - Sharing 5 Hari", price: "Rp 15.000", priceVal: 15000, tag: "srv3", tagName: "SERVER 3", desc: ["Sharing", "5 Hari"] },
+
+      { name: "Disney Server 3 - 1 Bulan - 5 User", price: "Rp 24.000", priceVal: 24000, tag: "srv3", tagName: "SERVER 3", desc: ["Durasi 1 Bulan", "5 User"] },
+      { name: "Disney Server 3 - 1 Bulan - 2 User", price: "Rp 28.000", priceVal: 28000, tag: "srv3", tagName: "SERVER 3", desc: ["Durasi 1 Bulan", "2 User"] },
+      { name: "Disney Server 3 - 1 Bulan - 1 User", price: "Rp 32.000", priceVal: 32000, tag: "srv3", tagName: "SERVER 3", desc: ["Durasi 1 Bulan", "1 User"] },
+
+      // SERVER 4
+      { name: "Disney Server 4 - 1 Bulan - Private", price: "Rp 41.000", priceVal: 41000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Bulan", "Private"] }
+    ]
+  },
+
+  {
+    id: 'youtube',
+    name: 'YouTube',
+    image: 'https://files.catbox.moe/apil2k.jpg',
+    cat: ['streaming','music','populer'],
+    packages: [
+      // SERVER 1
+      { name: "YouTube Server 1 - 1 Bulan - Individu Seller", price: "Rp 24.000", priceVal: 24000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Individu Seller"] },
+      { name: "YouTube Server 1 - 1 Bulan - Individu Buyer", price: "Rp 11.000", priceVal: 11000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Individu Buyer"] },
+      { name: "YouTube Server 1 - 1 Bulan - Family Head Seller", price: "Rp 18.000", priceVal: 18000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Family Head Seller"] },
+      { name: "YouTube Server 1 - 1 Bulan - Family Head Buyer", price: "Rp 15.000", priceVal: 15000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Family Head Buyer"] },
+      { name: "YouTube Server 1 - 1 Bulan - Invite Family Seller", price: "Rp 13.000", priceVal: 13000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Invite Family Seller"] },
+      { name: "YouTube Server 1 - 1 Bulan - Invite Family Buyer", price: "Rp 10.000", priceVal: 10000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Invite Family Buyer"] },
+
+      // SERVER 2
+      { name: "YouTube Server 2 - 1 Bulan - Famplan", price: "Rp 7.500", priceVal: 7500, tag: "srv2", tagName: "SERVER 2", desc: ["Durasi 1 Bulan", "Famplan"] },
+      { name: "YouTube Server 2 - 1 Bulan - Famhead", price: "Rp 11.000", priceVal: 11000, tag: "srv2", tagName: "SERVER 2", desc: ["Durasi 1 Bulan", "Famhead"] },
+      { name: "YouTube Server 2 - 1 Bulan - Indplan", price: "Rp 11.000", priceVal: 11000, tag: "srv2", tagName: "SERVER 2", desc: ["Durasi 1 Bulan", "Indplan"] },
+
+      // SERVER 3
+      { name: "YouTube Server 3 - PRIVATE 2 Minggu", price: "Rp 22.500", priceVal: 22500, tag: "srv3", tagName: "SERVER 3", desc: ["Private", "2 Minggu"] },
+
+      // SERVER 4
+      { name: "YouTube Server 4 - 1 Bulan - Invite", price: "Rp 9.000", priceVal: 9000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Bulan", "Invite"] }
+    ]
+  },
+
+  {
+    id: 'gemini',
+    name: 'Gemini',
+    image: 'https://img1.pixhost.to/images/11266/676898428_ochobot.jpg',
+    cat: ['ai'],
+    packages: [
+      // SERVER 1
+      { name: "Gemini Server 1 - 1 Bulan - Private Seller", price: "Rp 28.000", priceVal: 28000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Private Seller", "BONUS: GDrive 2TB"] },
+
+      // SERVER 4
+      { name: "Gemini Server 4 - 1 Bulan - Private", price: "Rp 11.000", priceVal: 11000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Bulan", "Private", "BONUS: GDrive 2TB"] }
+    ]
+  },
+
+  {
+    id: 'duolingo',
+    name: 'Duolingo',
+    image: 'https://img1.pixhost.to/images/11266/676898553_ochobot.jpg',
+    cat: ['populer'],
+    packages: [
+      // SERVER 1 - 2 Minggu
+      { name: "Duolingo Server 1 - 2 Minggu - Invite", price: "Rp 12.000", priceVal: 12000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 2 Minggu", "Invite"] },
+      { name: "Duolingo Server 1 - 2 Minggu - FamHead", price: "Rp 21.000", priceVal: 21000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 2 Minggu", "FamHead"] },
+
+      // SERVER 1 - 1 Bulan
+      { name: "Duolingo Server 1 - 1 Bulan - Invite", price: "Rp 19.000", priceVal: 19000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Invite"] },
+      { name: "Duolingo Server 1 - 1 Bulan - FamHead", price: "Rp 26.000", priceVal: 26000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "FamHead"] },
+      { name: "Duolingo Server 1 - 1 Bulan - FamPlan", price: "Rp 36.000", priceVal: 36000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "FamPlan"] },
+
+      // SERVER 3
+      { name: "Duolingo Server 3 - 1 Bulan - Super", price: "Rp 14.000", priceVal: 14000, tag: "srv3", tagName: "SERVER 3", desc: ["Durasi 1 Bulan", "Super"] },
+
+      // SERVER 4
+      { name: "Duolingo Server 4 - 1 Bulan - Private", price: "Rp 18.000", priceVal: 18000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Bulan", "Private"] }
+    ]
+  },
+
+  {
+    id: 'remini',
+    name: 'Remini',
+    image: 'https://files.catbox.moe/kx6pux.jpg',
+    cat: ['populer'],
+    packages: [
+      // SERVER 1
+      { name: "Remini Server 1 - 1 Bulan - Sharing", price: "Rp 21.000", priceVal: 21000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Sharing"] },
+
+      // SERVER 2
+      { name: "Remini Server 2 - 1 Bulan - Sharing Web", price: "Rp 26.000", priceVal: 26000, tag: "srv2", tagName: "SERVER 2", desc: ["Durasi 1 Bulan", "Sharing Web"] },
+
+      // SERVER 3
+      { name: "Remini Server 3 - Via Web - 1 Bulan", price: "Rp 13.000", priceVal: 13000, tag: "srv3", tagName: "SERVER 3", desc: ["Via Web", "1 Bulan"] },
+      { name: "Remini Server 3 - Via Aplikasi - 1 Minggu", price: "Rp 7.000", priceVal: 7000, tag: "srv3", tagName: "SERVER 3", desc: ["Via Aplikasi", "1 Minggu"] },
+      { name: "Remini Server 3 - Via Aplikasi - 1 Tahun", price: "Rp 25.000", priceVal: 25000, tag: "srv3", tagName: "SERVER 3", desc: ["Via Aplikasi", "1 Tahun"] },
+    ]
+}, 
+
+{
+  id: 'appletv',
+  name: 'Apple TV',
+  image: 'https://img1.pixhost.to/images/11285/677313054_ochobot.jpg',
+  cat: ['film', 'streaming', 'populer'],
+  packages: [
+
+    // SERVER 4
+    { name: "Apple TV Server 4 - 1 Bulan - Private", price: "Rp 15.000", priceVal: 15000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Bulan", "Private"] },
+  ]
+},
+
+{
+  id: 'applemusic',
+  name: 'Apple Music',
+  image: 'https://img1.pixhost.to/images/11285/677313255_ochobot.jpg',
+  cat: ['music', 'audio', 'populer'],
+  packages: [
+    // SERVER 1
+    { name: "Apple Music Server 1 - 1 Bulan - Invite", price: "Rp 15.000", priceVal: 15000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Invite"] },
+    { name: "Apple Music Server 1 - 1 Bulan - Family Head", price: "Rp 20.000", priceVal: 20000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Family Head"] },
+
+    // SERVER 4
+    { name: "Apple Music Server 4 - 1 Bulan - Private", price: "Rp 15.000", priceVal: 15000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Bulan", "Private"] },
+  ]
+},
+
+{
+  id: 'blackbox',
+  name: 'Blackbox AI',
+  image: 'https://img1.pixhost.to/images/11285/677312796_ochobot.jpg',
+  cat: ['ai'],
+  packages: [
+    // SERVER 1
+    { name: "Blackbox Server 1 - 3 Bulan - Private", price: "Rp 25.000", priceVal: 25000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 3 Bulan", "Private"] },
+  ]
+},
+
+{
+  id: 'camscanner',
+  name: 'CamScanner',
+  image: 'https://img1.pixhost.to/images/11285/677312582_ochobot.jpg',
+  cat: ['scan', 'dokumen', 'editing'],
+  packages: [
+    // SERVER 1
+    { name: "CamScanner Server 1 - 1 Bulan - Pro Sharing", price: "Rp 12.000", priceVal: 12000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Pro Sharing"] },
+    { name: "CamScanner Server 1 - 1 Bulan - Pro Private", price: "Rp 17.000", priceVal: 17000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Pro Private"] },
+    { name: "CamScanner Server 1 - Plus Lifetime", price: "Rp 17.000", priceVal: 17000, tag: "srv1", tagName: "SERVER 1", desc: ["Plus Lifetime"] },
+  ]
+},
+
+{
+  id: 'copilot',
+  name: 'Copilot',
+  image: 'https://img1.pixhost.to/images/11285/677312330_ochobot.jpg',
+  cat: ['ai'],
+  packages: [
+
+    // SERVER 4
+    { name: "Copilot Server 4 - 1 Bulan - Private", price: "Rp 36.000", priceVal: 36000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Bulan", "Private"] },
+    ]
+}, 
+{
+  id: 'catchplay',
+  name: 'CatchPlay',
+  image: 'https://img1.pixhost.to/images/11285/677310366_ochobot.jpg',
+  cat: ['streaming'],
+  packages: [
+
+    // SERVER 4
+    { name: "CatchPlay Server 4 - 1 Bulan - Sharing", price: "Rp 8.000", priceVal: 8000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Bulan", "Sharing"] },
+    { name: "CatchPlay Server 4 - 3 Bulan - Sharing", price: "Rp 12.500", priceVal: 12500, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 3 Bulan", "Sharing"] },
+    { name: "CatchPlay Server 4 - 1 Tahun - Sharing", price: "Rp 18.000", priceVal: 18000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Tahun", "Sharing"] },
+  ]
+},
+
+{
+  id: 'crunchyroll',
+  name: 'Crunchyroll',
+  image: 'https://img1.pixhost.to/images/11285/677312096_ochobot.jpg',
+  cat: ['streaming'],
+  packages: [
+    // SERVER 1
+    { name: "Crunchyroll Server 1 - 1 Bulan - Sharing", price: "Rp 16.000", priceVal: 16000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Sharing"] },
+    { name: "Crunchyroll Server 1 - 1 Bulan - Private", price: "Rp 23.000", priceVal: 23000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Private"] },
+
+    // SERVER 3 (1 Tahun Sharing)
+    { name: "Crunchyroll Server 3 - 1 Tahun - Sharing", price: "Rp 16.000", priceVal: 16000, tag: "srv3", tagName: "SERVER 3", desc: ["Durasi 1 Tahun", "Sharing"] },
+  ]
+},
+
+{
+  id: 'dazzcam',
+  name: 'Dazz Cam',
+  image: 'https://img1.pixhost.to/images/11285/677314910_ochobot.jpg',
+  cat: ['editing', 'camera'],
+  packages: [
+    // SERVER 1
+    { name: "Dazz Cam Server 1 - Lifetime - iOS Only", price: "Rp 13.000", priceVal: 13000, tag: "srv1", tagName: "SERVER 1", desc: ["Lifetime", "iOS Only"] },
+  ]
+},
+
+{
+  id: 'discord',
+  name: 'Discord Nitro',
+  image: 'https://img1.pixhost.to/images/11285/677310552_ochobot.jpg',
+  cat: ['chat', 'premium'],
+  packages: [
+  ]
+},
+
+{
+  id: 'deepl',
+  name: 'DeepL',
+  image: 'https://img1.pixhost.to/images/11285/677311125_ochobot.jpg',
+  cat: ['ai', 'translation'],
+  packages: [
+    // SERVER 1
+    { name: "DeepL Server 1 - 1 Bulan - Invite No Garansi", price: "Rp 9.000", priceVal: 9000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Invite", "No Garansi"] },
+    { name: "DeepL Server 1 - 1 Bulan - Invite Garansi", price: "Rp 14.000", priceVal: 14000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Invite", "Garansi"] },
+      ]
+}, 
+  /* =======================
+     ✦ DRAKOR ID ✦
+  ======================= */
+  {
+    id: 'drakorid',
+    name: 'Drakor ID',
+    image: 'https://img1.pixhost.to/images/11266/676895127_ochobot.jpg',
+    cat: ['streaming'],
+    packages: [
+      // SERVER 1
+      { name: "Drakor ID Server 1 - 1 Tahun - Sharing", price: "Rp 17.000", priceVal: 17000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Tahun", "Sharing"] },
+    ]
+  },
+
+  /* =======================
+     ✦ DRAMABOX ✦
+  ======================= */
+  {
+    id: 'dramabox',
+    name: 'Dramabox',
+    image: 'https://img1.pixhost.to/images/11266/676895400_ochobot.jpg',
+    cat: ['streaming'],
+    packages: [
+      // SERVER 1
+      { name: "Dramabox Server 1 - 1 Bulan - Sharing", price: "Rp 20.000", priceVal: 20000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Sharing"] },
+
+      // SERVER 3
+      { name: "Dramabox Server 3 - 1 Bulan - Sharing", price: "Rp 12.500", priceVal: 12500, tag: "srv3", tagName: "SERVER 3", desc: ["Durasi 1 Bulan", "Sharing"] },
+
+      // SERVER 4
+      { name: "Dramabox Server 4 - 1 Bulan - Private", price: "Rp 25.000", priceVal: 25000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Bulan", "Private"] }
+    ]
+  },
+
+  /* =======================
+     ✦ EPIK ✦
+  ======================= */
+  {
+    id: 'epik',
+    name: 'Epik',
+    image: 'https://img1.pixhost.to/images/11266/676895720_ochobot.jpg',
+    cat: ['editing', 'photo'],
+    packages: [
+
+      // SERVER 4
+      { name: "Epik Server 4 - 1 Tahun - Premium", price: "Rp 46.000", priceVal: 46000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Tahun", "Premium"] }
+    ]
+  },
+
+  /* =======================
+     ✦ FACEAPP ✦
+  ======================= */
+  {
+    id: 'faceapp',
+    name: 'FaceApp',
+    image: 'https://img1.pixhost.to/images/11266/676895843_ochobot.jpg',
+    cat: ['editing', 'photo'],
+    packages: [
+      // SERVER 1
+      { name: "FaceApp Server 1 - 1 Bulan (iOS Only)", price: "Rp 20.000", priceVal: 20000, tag: "srv1", tagName: "SERVER 1", desc: ["iOS Only", "Durasi 1 Bulan"] },
+      { name: "FaceApp Server 1 - 1 Tahun (iOS Only)", price: "Rp 30.000", priceVal: 30000, tag: "srv1", tagName: "SERVER 1", desc: ["iOS Only", "Durasi 1 Tahun"] },
+    ]
+  },
+
+  /* =======================
+     ✦ FIZZO ✦
+  ======================= */
+  {
+    id: 'fizzo',
+    name: 'Fizzo',
+    image: 'https://img1.pixhost.to/images/11266/676895973_ochobot.jpg',
+    cat: ['reading', 'novel'],
+    packages: [
+      // SERVER 1
+      { name: "Fizzo Server 1 - 1 Bulan - Sharing", price: "Rp 13.000", priceVal: 13000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Sharing"] },
+
+      // SERVER 4
+      { name: "Fizzo Server 4 - 1 Bulan - Premium", price: "Rp 21.000", priceVal: 21000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Bulan", "Premium"] }
+    ]
+  },
+
+  /* =======================
+     ✦ GAGAOOLALA ✦
+  ======================= */
+  {
+    id: 'gagaoolala',
+    name: 'GagaOOLala',
+    image: 'https://img1.pixhost.to/images/11266/676896192_ochobot.jpg',
+    cat: ['streaming'],
+    packages: [
+      { name: "GagaOOLala Server 1 - 1 Bulan - Sharing", price: "Rp 25.000", priceVal: 25000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Sharing"] },
+    ]
+  },
+
+  /* =======================
+     ✦ GAME ANDROID ✦
+  ======================= */
+  {
+    id: 'gameandroid',
+    name: 'Game Android',
+    image: 'https://img1.pixhost.to/images/11266/676897429_ochobot.jpg',
+    cat: ['game'],
+    packages: [
+
+      // SERVER 3 (Only Android)
+      { name: "Game Android Server 3 - Stardew Valley", price: "Rp 13.000", priceVal: 13000, tag: "srv3", tagName: "SERVER 3", desc: ["Only Android"] },
+      { name: "Game Android Server 3 - Muse Dash", price: "Rp 10.000", priceVal: 10000, tag: "srv3", tagName: "SERVER 3", desc: ["Only Android"] },
+      { name: "Game Android Server 3 - Minecraft", price: "Rp 12.000", priceVal: 12000, tag: "srv3", tagName: "SERVER 3", desc: ["Only Android"] },
+    ]
+  },
+
+  /* =======================
+     ✦ GAME IOS ✦
+  ======================= */
+  {
+    id: 'gameios',
+    name: 'Game iOS',
+    image: 'https://img1.pixhost.to/images/11266/676897433_ochobot.jpg',
+    cat: ['game'],
+    packages: [
+      // SERVER 1 (Only iOS)
+      { name: "Game iOS - San Andreas", price: "Rp 10.000", priceVal: 10000, tag: "srv1", tagName: "SERVER 1", desc: ["Only iOS"] },
+      { name: "Game iOS - Bully", price: "Rp 10.000", priceVal: 10000, tag: "srv1", tagName: "SERVER 1", desc: ["Only iOS"] },
+      { name: "Game iOS - Minecraft", price: "Rp 8.000", priceVal: 8000, tag: "srv1", tagName: "SERVER 1", desc: ["Only iOS"] },
+      { name: "Game iOS - Scribblenauts", price: "Rp 11.000", priceVal: 11000, tag: "srv1", tagName: "SERVER 1", desc: ["Only iOS"] },
+      { name: "Game iOS - Monopoly", price: "Rp 8.000", priceVal: 8000, tag: "srv1", tagName: "SERVER 1", desc: ["Only iOS"] },
+      { name: "Game iOS - Pou", price: "Rp 6.000", priceVal: 6000, tag: "srv1", tagName: "SERVER 1", desc: ["Only iOS"] },
+      { name: "Game iOS - Cheat GTA SA", price: "Rp 10.000", priceVal: 10000, tag: "srv1", tagName: "SERVER 1", desc: ["Only iOS"] },
+    ]
+  },
+
+  /* =======================
+     ✦ GENFLIX ✦
+  ======================= */
+  {
+    id: 'genflix',
+    name: 'Genflix',
+    image: 'https://img1.pixhost.to/images/11266/676896378_ochobot.jpg',
+    cat: ['streaming'],
+    packages: [
+      { name: "Genflix Server 1 - 1 Bulan - Sharing", price: "Rp 11.000", priceVal: 11000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Sharing"] },
+      { name: "Genflix Server 1 - 1 Bulan - Private", price: "Rp 19.000", priceVal: 19000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Private"] },
+    ]
+  },
+
+  /* =======================
+     ✦ DROPBOX ✦
+  ======================= */
+{
+  id: 'dropbox',
+  name: 'Dropbox',
+  image: 'https://img1.pixhost.to/images/11266/676896570_ochobot.jpg',
+  cat: ['app'],
+  packages: [
+    { name: "Dropbox Server 4 - 1 Bulan - Private", price: "Rp 8.500", priceVal: 8500, tag: "srv4", tagName: "SERVER 4", desc: ["Private", "Durasi 1 Bulan"] },
+    { name: "Dropbox Server 4 - 1 Bulan - Sharing", price: "Rp 5.000", priceVal: 5000, tag: "srv4", tagName: "SERVER 4", desc: ["Sharing", "Durasi 1 Bulan"] }
+  ]
+},
+
+{
+  id: 'getcontact',
+  name: 'GetContact',
+  image: 'https://img1.pixhost.to/images/11293/677465782_miwamikadono.jpg',
+  cat: ['app'],
+  packages: [
+    { name: "Server 2 - 1 Bulan - Premium", price: "Rp 16.500", priceVal: 16500, tag: "srv2", tagName: "SERVER 2", desc: ["Durasi 1 Bulan", "Premium"] },
+    { name: "Server 3 - 1 Bulan - Premium", price: "Rp 9.000", priceVal: 9000, tag: "srv3", tagName: "SERVER 3", desc: ["Durasi 1 Bulan", "Premium"] },
+    { name: "Server 4 - 1 Bulan - Premium", price: "Rp 19.000", priceVal: 19000, tag: "srv4", tagName: "SERVER 4", desc: ["Durasi 1 Bulan", "Premium"] }
+  ]
+},
+
+{
+  id: 'goodnotes',
+  name: 'GoodNotes',
+  image: 'https://img1.pixhost.to/images/11293/677466109_miwamikadono.jpg',
+  cat: ['app'],
+  packages: [
+    { name: "Server 1 - 1 Tahun - iOS Only", price: "Rp 15.000", priceVal: 15000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Tahun", "iOS Only"] }
+  ]
+},
+
+{
+  id: 'gmail',
+  name: 'Gmail',
+  image: 'https://img1.pixhost.to/images/11293/677466235_miwamikadono.jpg',
+  cat: ['app'],
+  packages: [
+    { name: "Server 1 - Email", price: "Rp 3.000", priceVal: 3000, tag: "srv1", tagName: "SERVER 1", desc: ["Email"] }
+  ]
+},
+
+{
+  id: 'googledrive',
+  name: 'Google Drive',
+  image: 'https://img1.pixhost.to/images/11293/677466314_miwamikadono.jpg',
+  cat: ['app'],
+  packages: [
+    { name: "Server 4 - 100 GB", price: "Rp 46.000", priceVal: 46000, tag: "srv4", tagName: "SERVER 4", desc: ["100 GB"] },
+    { name: "Server 4 - 300 GB", price: "Rp 86.000", priceVal: 86000, tag: "srv4", tagName: "SERVER 4", desc: ["300 GB"] }
+  ]
+},
+
+{
+  id: 'grammarly',
+  name: 'Grammarly',
+  image: 'https://img1.pixhost.to/images/11293/677466366_miwamikadono.jpg',
+  cat: ['ai'],
+  packages: [
+    { name: "Server 1 - 1 Bulan - Sharing", price: "Rp 14.000", priceVal: 14000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Sharing"] },
+    { name: "Server 1 - 1 Bulan - Private", price: "Rp 36.000", priceVal: 36000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Private"] }
+  ]
+},
+
+{
+  id: 'hbomax',
+  name: 'HBO Max',
+  image: 'https://img1.pixhost.to/images/11293/677466402_miwamikadono.jpg',
+  cat: ['streaming'],
+  packages: [
+    { name: "Server 1 - 1 Bulan - Sharing", price: "Rp 26.000", priceVal: 26000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Sharing"] },
+    { name: "Server 1 - 1 Bulan - Private", price: "Rp 81.000", priceVal: 81000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Private"] },
+    { name: "Server 2 - 1 Bulan - Sharing", price: "Rp 21.000", priceVal: 21000, tag: "srv2", tagName: "SERVER 2", desc: ["Durasi 1 Bulan", "Sharing"] }
+  ]
+},
+
+{
+  id: 'ibispaint',
+  name: 'Ibis Paint X',
+  image: 'https://img1.pixhost.to/images/11293/677466536_miwamikadono.jpg',
+  cat: ['editing'],
+  packages: [
+    { name: "Server 1 - 1 Tahun - Premium", price: "Rp 21.000", priceVal: 21000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Tahun", "Premium"] }
+  ]
+},
+
+{
+  id: 'iflix',
+  name: 'Iflix',
+  image: 'https://img1.pixhost.to/images/11293/677466665_miwamikadono.jpg',
+  cat: ['streaming'],
+  packages: [
+    { name: "Server 1 - 1 Bulan - Sharing", price: "Rp 11.000", priceVal: 11000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Sharing"] },
+    { name: "Server 1 - 1 Bulan - Private", price: "Rp 31.000", priceVal: 31000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Bulan", "Private"] },
+    { name: "Server 1 - 1 Tahun - Sharing", price: "Rp 18.000", priceVal: 18000, tag: "srv1", tagName: "SERVER 1", desc: ["Durasi 1 Tahun", "Sharing"] }
+  ]
+},
+
+{
+  id: 'inshot',
+  name: 'InShot',
+  image: 'https://img1.pixhost.to/images/11293/677466869_miwamikadono.jpg',
+  cat: ['editing'],
+  packages: [
+    { name: "Server 4 - Lifetime Android", price: "Rp 18.000", priceVal: 18000, tag: "srv4", tagName: "SERVER 4", desc: ["Lifetime Android"] },
+    { name: "Server 4 - Lifetime iOS", price: "Rp 18.000", priceVal: 18000, tag: "srv4", tagName: "SERVER 4", desc: ["Lifetime iOS"] }
+  ]
+}, 
+
+  {
+    id: "linktree",
+    name: "Linktree",
+    image: "https://img1.pixhost.to/images/11296/677526431_miwamikadono.jpg",
+    cat: ["app"],
+    packages: [
+      {
+        name: "Server 4 - 3 Bulan - Private",
+        price: "Rp 91.000",
+        priceVal: 91000,
+        tag: "srv4",
+        tagName: "SERVER 4",
+        desc: ["Durasi 3 Bulan", "Private"]
+      }
+    ]
+  },
+
+  {
+    id: "loklok",
+    name: "Loklok",
+    image: "https://img1.pixhost.to/images/11296/677526690_miwamikadono.jpg",
+    cat: ["streaming"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - 3U Basic",
+        price: "Rp 23.000",
+        priceVal: 23000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "3U Basic"]
+      },
+      {
+        name: "Server 1 - 1 Bulan - 4U Standar",
+        price: "Rp 29.000",
+        priceVal: 29000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "4U Standar"]
+      },
+      {
+        name: "Server 2 - 1 Bulan - Basic Sharing",
+        price: "Rp 22.000",
+        priceVal: 22000,
+        tag: "srv2",
+        tagName: "SERVER 2",
+        desc: ["Durasi 1 Bulan", "Basic Sharing"]
+      }
+    ]
+  },
+
+  {
+    id: "mango",
+    name: "Mango TV",
+    image: "https://img1.pixhost.to/images/11296/677526803_miwamikadono.jpg",
+    cat: ["streaming"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - Sharing",
+        price: "Rp 21.000",
+        priceVal: 21000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Sharing"]
+      },
+      {
+        name: "Server 3 - 1 Bulan - Sharing",
+        price: "Rp 13.000",
+        priceVal: 13000,
+        tag: "srv3",
+        tagName: "SERVER 3",
+        desc: ["Durasi 1 Bulan", "Sharing"]
+      }
+    ]
+  },
+
+  {
+    id: "meitu",
+    name: "Meitu",
+    image: "https://img1.pixhost.to/images/11296/677526898_miwamikadono.jpg",
+    cat: ["editing"],
+    packages: [
+      {
+        name: "Server 1 - 1 Minggu - Private",
+        price: "Rp 13.000",
+        priceVal: 13000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Minggu", "Private"]
+      },
+      {
+        name: "Server 1 - 1 Bulan - Sharing",
+        price: "Rp 26.000",
+        priceVal: 26000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Sharing"]
+      },
+      {
+        name: "Server 1 - 1 Bulan - Private",
+        price: "Rp 56.000",
+        priceVal: 56000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Private"]
+      },
+      {
+        name: "Server 3 - 1 Bulan - Private",
+        price: "Rp 7.000",
+        priceVal: 7000,
+        tag: "srv3",
+        tagName: "SERVER 3",
+        desc: ["Durasi 1 Bulan", "Private"]
+      }
+    ]
+  },
+
+  {
+    id: "microsoft365",
+    name: "Microsoft 365",
+    image: "https://img1.pixhost.to/images/11296/677527067_miwamikadono.jpg",
+    cat: ["app"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - Invite",
+        price: "Rp 10.000",
+        priceVal: 10000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Invite"]
+      },
+      {
+        name: "Server 1 - 1 Bulan - Head",
+        price: "Rp 15.000",
+        priceVal: 15000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Head"]
+      },
+      {
+        name: "Server 2 - 1 Bulan - Invite",
+        price: "Rp 16.000",
+        priceVal: 16000,
+        tag: "srv2",
+        tagName: "SERVER 2",
+        desc: ["Durasi 1 Bulan", "Invite"]
+      },
+      {
+        name: "Server 2 - 1 Bulan - Individu",
+        price: "Rp 20.000",
+        priceVal: 20000,
+        tag: "srv2",
+        tagName: "SERVER 2",
+        desc: ["Durasi 1 Bulan", "Individu"]
+      },
+      {
+        name: "Server 4 - 1 Bulan - Private",
+        price: "Rp 36.000",
+        priceVal: 36000,
+        tag: "srv4",
+        tagName: "SERVER 4",
+        desc: ["Durasi 1 Bulan", "Private"]
+      }
+    ]
+  },
+
+  {
+    id: "mojo",
+    name: "Mojo",
+    image: "https://img1.pixhost.to/images/11296/677527380_miwamikadono.jpg",
+    cat: ["editing"],
+    packages: [
+      {
+        name: "Server 4 - 1 Bulan - Sharing",
+        price: "Rp 10.000",
+        priceVal: 10000,
+        tag: "srv4",
+        tagName: "SERVER 4",
+        desc: ["Durasi 1 Bulan", "Sharing"]
+      },
+      {
+        name: "Server 4 - 1 Tahun - Sharing",
+        price: "Rp 18.000",
+        priceVal: 18000,
+        tag: "srv4",
+        tagName: "SERVER 4",
+        desc: ["Durasi 1 Tahun", "Sharing"]
+      }
+    ]
+  },
+
+  {
+    id: "moviebox",
+    name: "Movie Box",
+    image: "https://img1.pixhost.to/images/11296/677527463_miwamikadono.jpg",
+    cat: ["streaming"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - Sharing",
+        price: "Rp 14.000",
+        priceVal: 14000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Sharing"]
+      },
+      {
+        name: "Server 1 - 3 Bulan - Sharing",
+        price: "Rp 21.000",
+        priceVal: 21000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 3 Bulan", "Sharing"]
+      },
+      {
+        name: "Server 1 - 1 Tahun - Sharing",
+        price: "Rp 35.000",
+        priceVal: 35000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Tahun", "Sharing"]
+      }
+    ]
+  },
+
+  {
+    id: "perplexity",
+    name: "Perplexity AI",
+    image: "https://img1.pixhost.to/images/11296/677527549_miwamikadono.jpg",
+    cat: ["ai"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan NW - Sharing",
+        price: "Rp 26.000",
+        priceVal: 26000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan NW", "Sharing"]
+      },
+      {
+        name: "Server 1 - 1 Bulan NW - Private",
+        price: "Rp 56.000",
+        priceVal: 56000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan NW", "Private"]
+      },
+      {
+        name: "Server 1 - 1 Bulan FW - Sharing",
+        price: "Rp 36.000",
+        priceVal: 36000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan FW", "Sharing"]
+      },
+      {
+        name: "Server 1 - 1 Bulan FW - Private",
+        price: "Rp 106.000",
+        priceVal: 106000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan FW", "Private"]
+      },
+      {
+        name: "Server 3 - Private",
+        price: "Rp 16.000",
+        priceVal: 16000,
+        tag: "srv3",
+        tagName: "SERVER 3",
+        desc: ["Private"]
+      }
+    ]
+  },
+
+  {
+    id: "photoroom",
+    name: "Photoroom",
+    image: "https://img1.pixhost.to/images/11296/677527703_miwamikadono.jpg",
+    cat: ["editing"],
+    packages: [
+      {
+        name: "Server 1 - 1 Tahun - Private Android/iOS",
+        price: "Rp 16.000",
+        priceVal: 16000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Tahun", "Private", "Android/iOS"]
+      },
+      {
+        name: "Server 1 - 1 Tahun - Private Windows",
+        price: "Rp 26.000",
+        priceVal: 26000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Tahun", "Private", "Windows"]
+      }
+    ]
+  },
+
+  {
+    id: "photoshop",
+    name: "Photoshop",
+    image: "https://img1.pixhost.to/images/11296/677527912_miwamikadono.jpg",
+    cat: ["editing"],
+    packages: [
+      {
+        name: "Server 4 - 1 Bulan - Sharing",
+        price: "Rp 9.000",
+        priceVal: 9000,
+        tag: "srv4",
+        tagName: "SERVER 4",
+        desc: ["Durasi 1 Bulan", "Sharing"]
+      },
+      {
+        name: "Server 4 - 1 Tahun - Sharing",
+        price: "Rp 18.000",
+        priceVal: 18000,
+        tag: "srv4",
+        tagName: "SERVER 4",
+        desc: ["Durasi 1 Tahun", "Sharing"]
+      }
+    ]
+  }, 
+  
+  {
+    id: "picsart",
+    name: "Picsart",
+    image: "https://img1.pixhost.to/images/11302/677632890_miwamikadono.jpg",
+    cat: ["editing"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - Private Seller",
+        price: "Rp 10.000",
+        priceVal: 10000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Private Seller"]
+      },
+      {
+        name: "Server 2 - 1 Bulan - Sharing",
+        price: "Rp 6.000",
+        priceVal: 6000,
+        tag: "srv2",
+        tagName: "SERVER 2",
+        desc: ["Durasi 1 Bulan", "Sharing"]
+      },
+      {
+        name: "Server 2 - 1 Bulan - Private",
+        price: "Rp 12.000",
+        priceVal: 12000,
+        tag: "srv2",
+        tagName: "SERVER 2",
+        desc: ["Durasi 1 Bulan", "Private"]
+      },
+      {
+        name: "Server 4 - 1 Bulan - Private",
+        price: "Rp 15.000",
+        priceVal: 15000,
+        tag: "srv4",
+        tagName: "SERVER 4",
+        desc: ["Durasi 1 Bulan", "Private"]
+      }
+    ]
+  },
+
+  {
+    id: "quillbot",
+    name: "Quillbot",
+    image: "https://img1.pixhost.to/images/11302/677633339_ochobot.jpg",
+    cat: ["ai"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - Sharing",
+        price: "Rp 16.000",
+        priceVal: 16000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Sharing"]
+      },
+      {
+        name: "Server 1 - 1 Bulan - Private",
+        price: "Rp 36.000",
+        priceVal: 36000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Private"]
+      }
+    ]
+  },
+
+  {
+    id: "reelshort",
+    name: "Reel Short",
+    image: "https://img1.pixhost.to/images/11302/677633461_ochobot.jpg",
+    cat: ["streaming"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - Sharing",
+        price: "Rp 21.000",
+        priceVal: 21000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Sharing"]
+      }
+    ]
+  },
+
+  {
+    id: "sereal",
+    name: "Sereal",
+    image: "https://img1.pixhost.to/images/11302/677633895_ochobot.jpg",
+    cat: ["streaming"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - Sharing",
+        price: "Rp 21.000",
+        priceVal: 21000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Sharing"]
+      }
+    ]
+  },
+
+  {
+    id: "rcti",
+    name: "RCTI+",
+    image: "https://img1.pixhost.to/images/11302/677633997_ochobot.jpg",
+    cat: ["streaming"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - Sport",
+        price: "Rp 28.000",
+        priceVal: 28000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Sport"]
+      },
+      {
+        name: "Server 4 - 1 Bulan - Private",
+        price: "Rp 26.000",
+        priceVal: 26000,
+        tag: "srv4",
+        tagName: "SERVER 4",
+        desc: ["Durasi 1 Bulan", "Private"]
+      }
+    ]
+  },
+
+  {
+    id: "smallpdf",
+    name: "SmallPDF",
+    image: "https://img1.pixhost.to/images/11302/677634190_ochobot.jpg",
+    cat: ["app"],
+    packages: [
+      {
+        name: "Server 1 - 1 Minggu - Private",
+        price: "Rp 11.000",
+        priceVal: 11000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Minggu", "Private"]
+      }
+    ]
+  },
+
+  {
+    id: "studocu",
+    name: "Studocu",
+    image: "https://img1.pixhost.to/images/11302/677634411_ochobot.jpg",
+    cat: ["app"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - Private",
+        price: "Rp 26.000",
+        priceVal: 26000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Private"]
+      }
+    ]
+  },
+
+  {
+    id: "tidal",
+    name: "Tidal",
+    image: "https://img1.pixhost.to/images/11303/677635562_ochobot.jpg",
+    cat: ["music"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - Private Seller",
+        price: "Rp 13.000",
+        priceVal: 13000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Private Seller"]
+      }
+    ]
+  },
+
+  {
+    id: "vision",
+    name: "Vision+",
+    image: "https://img1.pixhost.to/images/11303/677635660_miwamikadono.jpg",
+    cat: ["streaming"],
+    packages: [
+      {
+        name: "Server 1 - 1 Bulan - Pay TV",
+        price: "Rp 21.000",
+        priceVal: 21000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Pay TV"]
+      },
+      {
+        name: "Server 1 - 1 Bulan - Sport",
+        price: "Rp 28.000",
+        priceVal: 28000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Sport"]
+      },
+      {
+        name: "Server 1 - 1 Bulan - Premium",
+        price: "Rp 30.000",
+        priceVal: 30000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Premium"]
+      }
+    ]
+  },
+
+  {
+    id: "expressvpn",
+    name: "ExpressVPN",
+    image: "https://img1.pixhost.to/images/11303/677635838_miwamikadono.jpg",
+    cat: ["vpn"],
+    packages: [
+      {
+        name: "Server 1 - 1 Minggu - Private",
+        price: "Rp 12.000",
+        priceVal: 12000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Minggu", "Private"]
+      },
+      {
+        name: "Server 1 - 1 Bulan - Private",
+        price: "Rp 20.000",
+        priceVal: 20000,
+        tag: "srv1",
+        tagName: "SERVER 1",
+        desc: ["Durasi 1 Bulan", "Private"]
+            }
+    ]
+  },
+  
+  {
+    "id": "strava",
+    "name": "Strava",
+    "image": "https://img1.pixhost.to/images/11310/677877580_ochobot.jpg",
+    "cat": ["app"],
+    "packages": [
+      {
+        "name": "Server 1 - 1 Bulan - Sharing",
+        "price": "Rp 16.000",
+        "priceVal": 16000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Bulan", "Sharing"]
+      },
+      {
+        "name": "Server 1 - 1 Bulan - Private",
+        "price": "Rp 21.000",
+        "priceVal": 21000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Bulan", "Private"]
+      }
+    ]
+  },
+
+  {
+    "id": "tradingview",
+    "name": "TradingView",
+    "image": "https://img1.pixhost.to/images/11310/677877843_ochobot.jpg",
+    "cat": ["app"],
+    "packages": [
+      {
+        "name": "Server 1 - 1 Bulan - Private",
+        "price": "Rp 21.000",
+        "priceVal": 21000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Bulan", "Private"]
+      }
+    ]
+  },
+
+  {
+    "id": "vidio",
+    "name": "Vidio",
+    "image": "https://img1.pixhost.to/images/11310/677878048_miwamikadono.jpg",
+    "cat": ["streaming"],
+    "packages": [
+      {
+        "name": "Server 1 - All Device Platinum - Sharing 1 Bulan",
+        "price": "Rp 25.000",
+        "priceVal": 25000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["All Device Platinum", "Sharing", "Durasi 1 Bulan"]
+      },
+      {
+        "name": "Server 1 - All Device Platinum - Private 1 Bulan",
+        "price": "Rp 43.000",
+        "priceVal": 43000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["All Device Platinum", "Private", "Durasi 1 Bulan"]
+      },
+
+      {
+        "name": "Server 1 - Mobile Platinum - Sharing 1 Bulan",
+        "price": "Rp 18.000",
+        "priceVal": 18000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Mobile Platinum", "Sharing", "Durasi 1 Bulan"]
+      },
+      {
+        "name": "Server 1 - Mobile Platinum - Private 1 Bulan",
+        "price": "Rp 28.000",
+        "priceVal": 28000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Mobile Platinum", "Private", "Durasi 1 Bulan"]
+      },
+
+      {
+        "name": "Server 1 - TV Platinum - Sharing 1 Bulan",
+        "price": "Rp 14.000",
+        "priceVal": 14000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["TV Platinum", "Sharing", "Durasi 1 Bulan"]
+      },
+      {
+        "name": "Server 1 - TV Platinum - Private 1 Bulan",
+        "price": "Rp 21.000",
+        "priceVal": 21000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["TV Platinum", "Private", "Durasi 1 Bulan"]
+      },
+
+      {
+        "name": "Server 2 - TV Only - Private 1 Tahun",
+        "price": "Rp 11.000",
+        "priceVal": 11000,
+        "tag": "srv2",
+        "tagName": "SERVER 2",
+        "desc": ["TV Only", "Private", "Durasi 1 Tahun"]
+      },
+      {
+        "name": "Server 2 - Mobile Only - Private 1 Bulan",
+        "price": "Rp 26.000",
+        "priceVal": 26000,
+        "tag": "srv2",
+        "tagName": "SERVER 2",
+        "desc": ["Mobile Only", "Private", "Durasi 1 Bulan"]
+      },
+      {
+        "name": "Server 2 - All Device - Private 1 Bulan",
+        "price": "Rp 41.000",
+        "priceVal": 41000,
+        "tag": "srv2",
+        "tagName": "SERVER 2",
+        "desc": ["All Device", "Private", "Durasi 1 Bulan"]
+      },
+
+      {
+        "name": "Server 3 - TV Only - Private 1 Tahun",
+        "price": "Rp 8.000",
+        "priceVal": 8000,
+        "tag": "srv3",
+        "tagName": "SERVER 3",
+        "desc": ["TV Only", "Private", "Durasi 1 Tahun"]
+      },
+      {
+        "name": "Server 3 - Mobile Only - Sharing 1 Bulan",
+        "price": "Rp 19.000",
+        "priceVal": 19000,
+        "tag": "srv3",
+        "tagName": "SERVER 3",
+        "desc": ["Mobile Only", "Sharing", "Durasi 1 Bulan"]
+      },
+
+      {
+        "name": "Server 4 - Platinum Mobile - 1 Bulan",
+        "price": "Rp 24.000",
+        "priceVal": 24000,
+        "tag": "srv4",
+        "tagName": "SERVER 4",
+        "desc": ["Platinum Mobile", "Durasi 1 Bulan"]
+      },
+      {
+        "name": "Server 4 - 2 Akun Platinum TV - 1 Bulan",
+        "price": "Rp 21.000",
+        "priceVal": 21000,
+        "tag": "srv4",
+        "tagName": "SERVER 4",
+        "desc": ["2 Akun Platinum TV", "Durasi 1 Bulan"]
+      },
+      {
+        "name": "Server 4 - Platinum TV - 1 Tahun",
+        "price": "Rp 16.000",
+        "priceVal": 16000,
+        "tag": "srv4",
+        "tagName": "SERVER 4",
+        "desc": ["Platinum TV", "Durasi 1 Tahun"]
+      }
+    ]
+  },
+
+  {
+    "id": "hma",
+    "name": "HMA VPN",
+    "image": "https://img1.pixhost.to/images/11310/677878501_miwamikadono.jpg",
+    "cat": ["vpn"],
+    "packages": [
+      {
+        "name": "Server 1 - 1 Minggu - Sharing",
+        "price": "Rp 11.000",
+        "priceVal": 11000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Minggu", "Sharing"]
+      },
+      {
+        "name": "Server 1 - 1 Minggu - Private",
+        "price": "Rp 9.000",
+        "priceVal": 9000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Minggu", "Private"]
+      },
+      {
+        "name": "Server 1 - 1 Bulan - Private",
+        "price": "Rp 21.000",
+        "priceVal": 21000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Bulan", "Private"]
+      },
+
+      {
+        "name": "Server 3 - 1 Bulan - Private",
+        "price": "Rp 14.500",
+        "priceVal": 14500,
+        "tag": "srv3",
+        "tagName": "SERVER 3",
+        "desc": ["Durasi 1 Bulan", "Private"]
+      },
+
+      {
+        "name": "Server 4 - 1 Bulan - Private",
+        "price": "Rp 16.000",
+        "priceVal": 16000,
+        "tag": "srv4",
+        "tagName": "SERVER 4",
+        "desc": ["Durasi 1 Bulan", "Private"]
+      }
+    ]
+  },
+
+  {
+    "id": "nordvpn",
+    "name": "NordVPN",
+    "image": "https://img1.pixhost.to/images/11310/677878740_miwamikadono.jpg",
+    "cat": ["vpn"],
+    "packages": [
+      {
+        "name": "Server 1 - 1 Minggu - Private",
+        "price": "Rp 13.000",
+        "priceVal": 13000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Minggu", "Private"]
+      },
+      {
+        "name": "Server 1 - 1 Tahun - Private",
+        "price": "Rp 36.000",
+        "priceVal": 36000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Tahun", "Private"]
+      }
+    ]
+  },
+
+  {
+    "id": "surfshark",
+    "name": "Surfshark",
+    "image": "https://img1.pixhost.to/images/11310/677879345_miwamikadono.jpg",
+    "cat": ["vpn"],
+    "packages": [
+      {
+        "name": "Server 1 - 1 Minggu - Private",
+        "price": "Rp 14.000",
+        "priceVal": 14000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Minggu", "Private"]
+      },
+      {
+        "name": "Server 1 - 1 Tahun - Sharing",
+        "price": "Rp 32.000",
+        "priceVal": 32000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Tahun", "Sharing"]
+      }
+    ]
+  },
+
+  {
+    "id": "vsco",
+    "name": "VSCO",
+    "image": "https://img1.pixhost.to/images/11310/677879809_ochobot.jpg",
+    "cat": ["editing"],
+    "packages": [
+      {
+        "name": "Server 1 - 1 Tahun - Sharing",
+        "price": "Rp 16.000",
+        "priceVal": 16000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Tahun", "Sharing"]
+      }
+    ]
+  },
+
+  {
+    "id": "wattpad",
+    "name": "Wattpad",
+    "image": "https://img1.pixhost.to/images/11310/677879923_miwamikadono.jpg",
+    "cat": ["app"],
+    "packages": [
+      {
+        "name": "Server 1 - 1 Bulan - Sharing",
+        "price": "Rp 14.000",
+        "priceVal": 14000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Bulan", "Sharing"]
+      }
+    ]
+  },
+
+  {
+    "id": "windscribe",
+    "name": "Windscribe",
+    "image": "https://img1.pixhost.to/images/11310/677880092_ochobot.jpg",
+    "cat": ["vpn"],
+    "packages": [
+      {
+        "name": "Server 1 - 1 Bulan - Sharing",
+        "price": "Rp 21.000",
+        "priceVal": 21000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Bulan", "Sharing"]
+      }
+    ]
+  },
+
+  {
+    "id": "wps",
+    "name": "WPS Office",
+    "image": "https://img1.pixhost.to/images/11310/677880337_ochobot.jpg",
+    "cat": ["app"],
+    "packages": [
+      {
+        "name": "Server 1 - 1 Bulan - Private",
+        "price": "Rp 16.000",
+        "priceVal": 16000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Bulan", "Private"]
+      },
+      {
+        "name": "Server 4 - 1 Bulan - Premium",
+        "price": "Rp 31.000",
+        "priceVal": 31000,
+        "tag": "srv4",
+        "tagName": "SERVER 4",
+        "desc": ["Durasi 1 Bulan", "Premium"]
+      },
+      {
+        "name": "Server 4 - 1 Tahun - Premium",
+        "price": "Rp 41.000",
+        "priceVal": 41000,
+        "tag": "srv4",
+        "tagName": "SERVER 4",
+        "desc": ["Durasi 1 Tahun", "Premium"]
+      }
+    ]
+  },
+
+  {
+    "id": "wink",
+    "name": "Wink",
+    "image": "https://img1.pixhost.to/images/11310/677880486_miwamikadono.jpg",
+    "cat": ["editing"],
+    "packages": [
+      {
+        "name": "Server 1 - 1 Minggu - Private",
+        "price": "Rp 13.000",
+        "priceVal": 13000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Minggu", "Private"]
+      },
+      {
+        "name": "Server 1 - 1 Bulan - Sharing",
+        "price": "Rp 21.000",
+        "priceVal": 21000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Bulan", "Sharing"]
+      },
+      {
+        "name": "Server 1 - 1 Bulan - Private",
+        "price": "Rp 31.000",
+        "priceVal": 31000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Durasi 1 Bulan", "Private"]
+      },
+
+      {
+        "name": "Server 2 - 1 Bulan - Private Android",
+        "price": "Rp 14.500",
+        "priceVal": 14500,
+        "tag": "srv2",
+        "tagName": "SERVER 2",
+        "desc": ["Private Android", "Durasi 1 Bulan"]
+      },
+
+      {
+        "name": "Server 3 - 1 Minggu - Private",
+        "price": "Rp 6.500",
+        "priceVal": 6500,
+        "tag": "srv3",
+        "tagName": "SERVER 3",
+        "desc": ["Durasi 1 Minggu", "Private"]
+      },
+      {
+        "name": "Server 3 - 1 Bulan - Private",
+        "price": "Rp 8.500",
+        "priceVal": 8500,
+        "tag": "srv3",
+        "tagName": "SERVER 3",
+        "desc": ["Durasi 1 Bulan", "Private"]
+      },
+      {
+        "name": "Server 3 - 1 Bulan - Sharing",
+        "price": "Rp 14.000",
+        "priceVal": 14000,
+        "tag": "srv3",
+        "tagName": "SERVER 3",
+        "desc": ["Durasi 1 Bulan", "Sharing"]
+      },
+      {
+        "name": "Server 3 - 1 Bulan - Private Plus",
+        "price": "Rp 33.000",
+        "priceVal": 33000,
+        "tag": "srv3",
+        "tagName": "SERVER 3",
+        "desc": ["Durasi 1 Bulan", "Private"]
+      }
+    ]
+  },
+
+  {
+    "id": "youai",
+    "name": "You AI",
+    "image": "https://img1.pixhost.to/images/11310/677880894_ochobot.jpg",
+    "cat": ["ai"],
+    "packages": [
+      {
+        "name": "Server 4 - 1 Minggu - Sharing",
+        "price": "Rp 18.000",
+        "priceVal": 18000,
+        "tag": "srv4",
+        "tagName": "SERVER 4",
+        "desc": ["Durasi 1 Minggu", "Sharing"]
+      },
+      {
+        "name": "Server 4 - 1 Bulan - Sharing",
+        "price": "Rp 24.000",
+        "priceVal": 24000,
+        "tag": "srv4",
+        "tagName": "SERVER 4",
+        "desc": ["Durasi 1 Bulan", "Sharing"]
+      }
+    ]
+  },
+
+  {
+    "id": "youku",
+    "name": "Youku",
+    "image": "https://img1.pixhost.to/images/11310/677881073_ochobot.jpg",
+    "cat": ["streaming"],
+    "packages": [
+      {
+        "name": "Server 1 - Sharing 1 Bulan",
+        "price": "Rp 11.000",
+        "priceVal": 11000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Sharing", "Durasi 1 Bulan"]
+      },
+      {
+        "name": "Server 1 - Sharing 3 Bulan",
+        "price": "Rp 18.000",
+        "priceVal": 18000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Sharing", "Durasi 3 Bulan"]
+      },
+      {
+        "name": "Server 1 - Sharing 1 Tahun",
+        "price": "Rp 26.000",
+        "priceVal": 26000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Sharing", "Durasi 1 Tahun"]
+      },
+      {
+        "name": "Server 1 - Private 1 Bulan",
+        "price": "Rp 33.000",
+        "priceVal": 33000,
+        "tag": "srv1",
+        "tagName": "SERVER 1",
+        "desc": ["Private", "Durasi 1 Bulan"]
+      }
+    ]
+  }
+];
+
+
+
+        // --- INIT ---
+        window.onload = () => {
+            setTimeout(() => { document.getElementById('introOverlay').style.opacity = '0'; setTimeout(() => { document.getElementById('introOverlay').style.visibility = 'hidden'; }, 800); }, 2000);
+            renderGrid('populer');
+            renderFullAppGrid();
+            renderTestimonials();
+        };
+
+        // --- NAVIGATION ---
+        function toggleSidebar() {
+            playClick();
+            document.getElementById('sidebar').classList.toggle('active');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+
+        function toggleMode() {
+            playClick(); document.body.classList.toggle('light-mode');
+        }
+
+        function navTo(page) {
+    playClick();
+    toggleSidebar();
+    window.scrollTo(0,0);
+    document.querySelectorAll('.page-section').forEach(p => p.style.display = 'none');
+    
+    if(page === 'home') {
+        document.getElementById('page-home').style.display = 'block';
+    } else if (page === 'app-page') {
+        document.getElementById('page-app').style.display = 'block';
+        renderFullAppGrid(); 
+    } else if (page === 'sosmed-page') {
+        document.getElementById('page-sosmed').style.display = 'block';
+    } else if (page === 'all-products') {
+        document.getElementById('page-all-products').style.display = 'block';
+        renderFullSearchGrid();
+    }
+}
+
+        function resetHome() {
+            playClick();
+            document.querySelectorAll('.page-section').forEach(p => p.style.display = 'none');
+            document.getElementById('page-home').style.display = 'block';
+            resetHomeBtn();
+            window.scrollTo(0,0);
+        }
+
+        function resetHomeBtn() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.filter-btn').classList.add('active');
+            renderGrid('populer');
+            document.querySelector('.search-input').value = '';
+        }
+
+        // --- RENDER GRID ---
+        function setFilter(category, btn) {
+            playClick();
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderGrid(category);
+        }
+
+        function filterAppList(query) {
+    if (query.trim() === "") {
+        renderGrid('populer'); 
+    } else {
+        renderGrid('all', query);
+    }
+}
+
+        function renderGrid(category, query = '') {
+            const container = document.getElementById('filterResults');
+            container.innerHTML = '';
+            
+            let items = [];
+            if (query) {
+                items = appsData.filter(a => a.name.toLowerCase().includes(query.toLowerCase()));
+            } else if (category === 'populer') {
+                const popIds = ['netflix','capcut','alightmotion','canva'];
+                items = popIds.map(id => appsData.find(a => a.id === id)).filter(Boolean);
+            } else if (category === 'all') {
+                items = appsData;
+            } else {
+                items = appsData.filter(a => a.cat.includes(category)).sort((a,b) => a.name.localeCompare(b.name));
+            }
+
+            if(items.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-sec)">Tidak ada produk</div>';
+                return;
+            }
+
+            let html = '<div class="app-grid">';
+            items.forEach(item => {
+                let badge = '';
+                if(item.id === 'netflix') badge = '<div class="badge-ribbon badge-populer">BEST SELLER</div>';
+                else if(category === 'populer') badge = '<div class="badge-ribbon">POPULER</div>';
+                
+                html += `
+                    <div class="item-card shiny-effect" onclick="openDetail('${item.id}')">
+                        ${badge}
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="item-title">${item.name}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderFullAppGrid() {
+            const containers = [document.getElementById('fullAppGrid'), document.getElementById('pageAppGrid')];
+            const sortedApps = [...appsData].sort((a, b) => a.name.localeCompare(b.name));
+
+            let html = '';
+            sortedApps.forEach(item => {
+                let badge = (item.id === 'netflix') ? '<div class="badge-ribbon badge-populer">BEST SELLER</div>' : '';
+                html += `
+                    <div class="item-card shiny-effect" onclick="openDetail('${item.id}')">
+                        ${badge}
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="item-title">${item.name}</div>
+                    </div>
+                `;
+            });
+
+            containers.forEach(c => { if(c) c.innerHTML = html; });
+        }
+
+        // --- ALL PRODUCTS LOGIC ---
+        let currentSort = 'abjad';
+        let activeFilters = { cat: ['all'], price: [], tag: [] };
+
+        function toggleSortMenu() { playClick(); document.getElementById('sortMenu').style.display = (document.getElementById('sortMenu').style.display==='block')?'none':'block'; }
+        function toggleFilterDrawer() { playClick(); document.getElementById('filterDrawer').classList.toggle('open'); if(document.getElementById('filterDrawer').classList.contains('open')) document.getElementById('filterDrawer').style.maxHeight='500px'; else document.getElementById('filterDrawer').style.maxHeight='0'; }
+        
+        function setSort(type) { playClick(); currentSort=type; document.getElementById('sortMenu').style.display='none'; renderAllProducts(document.getElementById('searchInput').value); }
+        function toggleFilter(btn, type, val) {
+            playClick();
+            if(type === 'cat') {
+                if(val === 'all') { activeFilters.cat = ['all']; btn.parentElement.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active')); btn.classList.add('active'); }
+                else { activeFilters.cat = activeFilters.cat.filter(x=>x!=='all'); if(activeFilters.cat.includes(val)) activeFilters.cat=activeFilters.cat.filter(x=>x!==val); else activeFilters.cat.push(val); btn.classList.toggle('active'); }
+            } else {
+                if(activeFilters[type].includes(val)) activeFilters[type] = activeFilters[type].filter(x=>x!==val); else activeFilters[type].push(val);
+                btn.classList.toggle('active');
+            }
+            renderAllProducts(document.getElementById('searchInput').value);
+        }
+
+        function renderAllProducts(query) {
+            const container = document.getElementById('allProductList');
+            container.innerHTML = '';
+            let allPkgs = [];
+            appsData.forEach(app => {
+                app.packages.forEach(pkg => {
+                    allPkgs.push({...pkg, appName: app.name, appImg: app.image});
+                });
+            });
+
+            let filtered = allPkgs.filter(p => {
+                const q = query.toLowerCase();
+                const matchQ = p.name.toLowerCase().includes(q) || p.appName.toLowerCase().includes(q);
+                const matchCat = activeFilters.cat.includes('all') || activeFilters.cat.includes('app');
+                
+                let matchPrice = true;
+                if(activeFilters.price.length > 0) {
+                    matchPrice = false;
+                    if(activeFilters.price.includes('low') && p.priceVal < 10000) matchPrice=true;
+                    if(activeFilters.price.includes('mid') && p.priceVal >= 10000 && p.priceVal <= 25000) matchPrice=true;
+                    if(activeFilters.price.includes('high') && p.priceVal > 25000) matchPrice=true;
+                }
+
+                let matchTag = true;
+                if(activeFilters.tag.length > 0) {
+                    matchTag = false;
+                    if(activeFilters.tag.includes('best') && p.tag === 'best') matchTag=true;
+                    if(activeFilters.tag.includes('bulk') && p.tag === 'bulk') matchTag=true;
+                }
+
+                return matchQ && matchCat && matchPrice && matchTag;
+            });
+
+            if(currentSort === 'abjad') filtered.sort((a,b) => a.name.localeCompare(b.name));
+            if(currentSort === 'murah') filtered.sort((a,b) => a.priceVal - b.priceVal);
+            if(currentSort === 'mahal') filtered.sort((a,b) => b.priceVal - a.priceVal);
+
+            filtered.forEach(item => {
+                let tagHtml = '';
+                if(item.tagName) {
+                    let color = item.tag==='best'?'tag-gold':(item.tag==='rec'?'tag-blue':'tag-green');
+                    tagHtml = `<span class="tag-shiny ${color}" style="margin-left:5px;">${item.tagName}</span>`;
+                }
+                
+                container.innerHTML += `
+                    <div class="list-item shiny-effect">
+                        <img src="${item.appImg}" class="list-img">
+                        <div class="list-info">
+                            <div class="list-name">${item.name} ${tagHtml}</div>
+                            <div class="list-price">${item.price}</div>
+                        </div>
+                        <button class="list-btn" onclick="orderNow('${item.name}')">ORDER</button>
+                    </div>
+                `;
+            });
+        }
+
+        // --- DETAIL MODAL ---
+        function getIconForDesc(text) {
+            text = text.toLowerCase();
+            if (text.includes("garansi")) return "fa-shield-alt";
+            if (text.includes("device") || text.includes("support")) return "fa-mobile-alt";
+            if (text.includes("login") || text.includes("akun") || text.includes("private")) return "fa-lock";
+            if (text.includes("sharing") || text.includes("invite") || text.includes("member")) return "fa-users";
+            if (text.includes("download") || text.includes("offline") || text.includes("ebook")) return "fa-download";
+            if (text.includes("iklan")) return "fa-ban";
+            if (text.includes("4k") || text.includes("1080p") || text.includes("hd") || text.includes("audio")) return "fa-tv";
+            if (text.includes("resiko")) return "fa-exclamation-triangle";
+            return "fa-check"; 
+        }
+
+function copyOrder(packageName) {
+    const text = `*✦ ORDERAN BARU ✦*\n\nProduk: ${packageName}\nMetode: WhatsApp\n\nMohon diproses ya Min!`;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Berhasil disalin!");
+    });
+}
+
+function openDetail(id) {
+    playClick();
+    const app = appsData.find(a => a.id === id);
+    if(!app) return;
+
+    document.getElementById('modalTitle').innerText = app.name;
+    const body = document.getElementById('modalBody');
+    body.innerHTML = `
+        <div style="text-align:center; margin-bottom:20px;">
+            <img src="${app.image}" style="width:80px; height:80px; border-radius:15px; border:2px solid var(--primary);">
+            <h3 style="margin-top:10px;">${app.name}</h3>
+        </div>
+    `;
+
+    app.packages.forEach(pkg => {
+        let colorClass = "tag-gold";
+        if(pkg.tag === 'srv2') colorClass = "tag-green";
+        if(pkg.tag === 'srv4') colorClass = "tag-blue";
+        
+        let tagHtml = pkg.tagName ? `<div style="display:inline-block; margin-left:5px;"><span class="tag-shiny ${colorClass}">${pkg.tagName}</span></div>` : '';
+
+        body.innerHTML += `
+            <div class="package-card shiny-effect">
+                <div class="pkg-head" onclick="togglePkg(this)">
+                    <div class="pkg-left">
+                        <div class="pkg-name">${pkg.name} ${tagHtml}</div>
+                        <span class="pkg-price">${pkg.price}</span>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="pkg-body">
+                    <div style="padding: 10px 0; display: flex; gap: 8px;">
+                        <button class="btn-animated" style="flex: 2; margin-top: 0;" onclick="orderNow('${pkg.name}')">ORDER <i class="fas fa-paper-plane"></i></button>
+                        <button class="btn-animated" style="flex: 1; margin-top: 0; background: #222; border: 1px solid #444;" onclick="copyOrder('${pkg.name}')"><i class="fas fa-copy"></i> SALIN</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    document.getElementById('detailModal').style.display = 'block';
+}
+
+
+        function togglePkg(head) {
+            playClick();
+            const body = head.nextElementSibling;
+            body.classList.toggle('show');
+            head.querySelector('i').style.transform = body.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        function closeModal() { playClick(); document.getElementById('detailModal').style.display = 'none'; }
+        function orderNow(name) { playClick(); window.open(`https://wa.me/6289515092009?text=${encodeURIComponent('Bang, mau order ' + name + '. Apa masih ada ya?')}`, '_blank'); }
+
+        // --- TESTIMONIALS ---
+        const rawTestimonials = [
+            { u: "@kokoroaja", c: "Beneran works 100%! Bukan kaleng-kaleng, adminnya juga ramah ga sok jual mahal.", d: "26 Mei 2025" }, { u: "@arry_sat", c: "Udah jarang overthinking sejak pake app ini, soalnya waktu gue habis scroll fitur-fitur randomnya.", d: "19 Mei 2025" }, 
+            { u: "@ethaniy", c: "Awalnya ragu karena murah banget, tapi ternyata legit cuy. Sekali beli langsung nagih.", d: "6 Okt 2025" }, { u: "@m_wildann1809", c: "Fitur-fiturnya niat banget, gue sampe bingung mau makasih atau merasa tersaingi.", d: "4 Des 2025" },
+            { u: "@zzakyd_", c: "Beli di sini tuh kayak cheat code hidup, premium tapi berasa bayar warung kopi.", d: "23 Jun 2025" }, { u: "@v1nnn_ib", c: "Kalo tau bakal se-wah ini, dari kemarin gue udah pindah. Yang lama bye.", d: "3 Nov 2025" },
+            { u: "@ricditzz_design", c: "Sumpah ini udah paling worth, yang lain banyak gaya doang. Di sini tinggal bayar langsung jalan.", d: "8 Sep 2025" }, { u: "@mhmmdfamii", c: "Transaksinya terlalu gampang, kayak ngajak mantan balikan… langsung nurut.", d: "10 Nov 2025" },
+            { u: "@mr.barr_", c: "Adminnya fast respon parah, gue ngetik baru setengah udah dibales duluan.", d: "30 Jun 2025" }, { u: "@vqmakk", c: "Premium murah ginian tuh dosa sih, bikin gue jadi ketagihan belanja ga mikir.", d: "15 Sep 2025" },
+            { u: "@adhipele", c: "Adminnya fast respon parah, gue ngetik baru setengah udah dibales duluan.", d: "7 Jul 2025" }, { u: "@azelonyth", c: "Adminnya terlalu baik sampe gue curiga dia bukan manusia. NPC tapi berguna.", d: "17 Nov 2025" },
+            { u: "@szenorthlenz", c: "Fast responnya overkill sih, gue ngetik 'bang' aja belum selesai udah dibales.", d: "23 Jun 2025" }, { u: "@kinggmielz", c: "Nyesel… nyesel kenapa ga beli dari kemarin-kemarin. Ini mah wajib coba.", d: "26 Mei 2025" },
+            { u: "@availa6le_", c: "Beli premium tapi harga student. Bang, kok baik banget sih? Saya jadi takut nyaman.", d: "6 Okt 2025" }, { u: "@gyuutaro_", c: "Yang mahal-mahal tolong minggir, ini yang rakyat butuh.", d: "16 Jun 2025" },
+            { u: "@jusz.ordinary", c: "Pesan jam ngantuk, eh tetep dibales. Customer service-nya ga punya jam tidur kayaknya.", d: "6 Okt 2025" }, { u: "@raka_budi_s", c: "Sumpah ini toko paling sabar ngadepin pertanyaan gue yang random banget.", d: "12 Mei 2025" },
+            { u: "@mraiseffendy59", c: "Nggak lebay, ga bohong, ini beneran tempat paling worth buat premium murah.", d: "27 Okt 2025" }, { u: "@fahri26429", c: "Gue sengaja tanya banyak biar ribet, tapi adminnya tetep jawab. Capek-capek bikin gue kagum.", d: "10 Nov 2025" },
+            { u: "@ptra.valenn", c: "Udah beberapa kali order, semuanya mulus. Bener-bener anti-zonk.", d: "29 Sep 2025" }, { u: "@vigsjsns", c: "Gue udah siap kecewa sebenernya, tapi ternyata malah terlalu bagus. Nyebelin.", d: "29 Sep 2025" },
+            { u: "@cylla12025", c: "Harga merakyat, kualitas sultan. Capek ga sih jadi terbaik?", d: "17 Nov 2025" }, { u: "@madz.std", c: "Harga bikin senyum, pelayanan bikin nyaman. Kombo mematikan.", d: "11 Ags 2025" },
+            { u: "@ardiizxx", c: "Service-nya niat banget, ga asal jual. Bikin betah balik lagi.", d: "6 Okt 2025" }, { u: "@zenn_non", c: "Tempat lain mahal sok high class, di sini murah tapi kualitas nusuk jantung.", d: "26 Mei 2025" },
+            { u: "@by4ann_", c: "Gak ngerti lagi, murah tapi vibes-nya premium. Suka banget sama pelayanannya.", d: "22 Sep 2025" }, { u: "@venerable_fanzx", c: "aman si kzrizusmo", d: "3 Nov 2025" },
+            { u: "@febgt_1yt", c: "Aman wir", d: "6 Des 2025" }, { u: "@aboyypeacefully", c: "Adminnya santai banget, tapi kerjanya rapi. Toxic calm vibes.", d: "13 Okt 2025" },
+            { u: "@rivaldyaj", c: "Udah coba di device lain juga aman, ga ada drama. Fix terpercaya.", d: "28 Jul 2025" }, { u: "@aldocukurukuk", c: "Beli premium kok kayak nipu sistem ya? Murahnya nyakitin hati pesaing.", d: "9 Jun 2025" },
+            { u: "@mpawsukayepink", c: "Kalo ada tempat favorit buat beli premium, ya di sini. Udah ga mau pindah lagi.", d: "25 Ags 2025" }, { u: "@azrilervandr", c: "Seller lain banyak gaya, di sini mah kerja beneran. Respect tapi kesel karena terlalu bagus.", d: "28 Jul 2025" },
+            { u: "@vall9.18", c: "Adminnya ga jutek, malah humble banget. Jadi enak transaksi.", d: "29 Sep 2025" }, { u: "@vicky.mra", c: "Harga segini tuh kurang ajar sih, masa premium tapi murah kayak jajan cilok.", d: "9 Jun 2025" },
+            { u: "@mad.armanda", c: "Dikasih garansi pula. Murah tapi ga murahan, mantap parah.", d: "7 Jul 2025" }, { u: "@alviskhairullah", c: "Murah banget sampe gue curiga, tapi setelah coba… eh malah ketagihan. Jahat sih ini.", d: "5 Des 2025" },
+            { u: "@conutx4_", c: "Ga ada penyesalan sama sekali, malah nyesel kenapa baru tau tempat ini.", d: "12 Mei 2025" }, { u: "@mirfanpann", c: "Ga ada drama, ga ada delay, semua berjalan lancar kayak air.", d: "12 Mei 2025" },
+            { u: "@tarow_design", c: "Di tempat lain ribet banget, di sini tinggal bayar langsung beres.", d: "12 Mei 2025" }, { u: "@peqwougt", c: "Udah tes di beberapa hp juga tetap aman, mantap banget.", d: "12 Mei 2025" }
+        ];
+
+        function renderTestimonials() {
+            const track = document.getElementById('testiTrack');
+            const combined = [...rawTestimonials, ...rawTestimonials];
+            let html = '';
+            combined.forEach(t => {
+                html += `
+                    <div class="testi-card">
+                        <div class="testi-user-row">
+                            <div class="user-avatar"><i class="fas fa-user"></i></div>
+                            <div class="user-info"><h4>${t.u}</h4><span>${t.d}</span></div>
+                        </div>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <div class="testi-text">"${t.c}"</div>
+                    </div>
+                `;
+            });
+            track.innerHTML = html;
+        }
+    </script>
+    <audio id="bgMusic" src="https://files.catbox.moe/qcfojq.mp3" loop></audio>
+
+<script>
+document.addEventListener("click", () => {
+    const audio = document.getElementById("bgMusic");
+    if (audio.paused) {
+        audio.muted = false; 
+        audio.play();
+    }
+});
+</script>
+<script>
+function openApp() {
+  const intro = document.getElementById("introOverlay");
+  intro.style.display = "none";
+  document.body.style.overflow = "auto";
+}
+</script>
+<script>
+const track = document.querySelector('.banner-track');
+const items = document.querySelectorAll('.banner-item');
+const total = items.length;
+
+let index = 0;
+let startX = 0;
+let currentX = 0;
+let isDragging = false;
+let autoSlide;
+
+// === AUTO SLIDE ===
+function startAutoSlide() {
+  autoSlide = setInterval(() => {
+    index = (index + 1) % total;
+    updateSlide();
+  }, 4000);
+}
+
+function stopAutoSlide() {
+  clearInterval(autoSlide);
+}
+
+function updateSlide() {
+  track.style.transition = 'transform 0.4s ease';
+  track.style.transform = `translateX(-${index * 100}%)`;
+}
+
+// === TOUCH EVENTS ===
+track.addEventListener('touchstart', e => {
+  stopAutoSlide();
+  startX = e.touches[0].clientX;
+  isDragging = true;
+});
+
+track.addEventListener('touchmove', e => {
+  if (!isDragging) return;
+  currentX = e.touches[0].clientX;
+  const diff = currentX - startX;
+  track.style.transition = 'none';
+  track.style.transform = `translateX(calc(-${index * 100}% + ${diff}px))`;
+});
+
+track.addEventListener('touchend', () => {
+  isDragging = false;
+  const diff = currentX - startX;
+
+  if (diff > 50 && index > 0) index--;
+  else if (diff < -50 && index < total - 1) index++;
+
+  updateSlide();
+  startAutoSlide();
+});
+
+// START
+startAutoSlide();
+</script>
+<script>
+function updateDesktopText() {
+  const btn = document.getElementById('desktopBtn');
+  if (!btn) return;
+
+  const isDesktop = document.body.classList.contains('desktop-mode');
+  btn.innerHTML = `<i class="fas fa-desktop"></i> Desktop Mode ${isDesktop ? 'ON' : 'OFF'}`;
+}
+
+function toggleDesktopMode() {
+  document.body.classList.toggle('desktop-mode');
+
+  localStorage.setItem(
+    'desktopMode',
+    document.body.classList.contains('desktop-mode') ? 'on' : 'off'
+  );
+
+  updateDesktopText();
+}
+
+// auto load saat buka app
+if (localStorage.getItem('desktopMode') === 'on') {
+  document.body.classList.add('desktop-mode');
+}
+
+updateDesktopText();
+</script>
+</div>
+</body>
+</html>
