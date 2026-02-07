@@ -332,7 +332,93 @@ body.product-detail,
 body.product-page {
     padding-top: 0px;
 }
-    </style>
+    
+/* ============================= */
+/*   POPUP ALUR PROSES ORDER     */
+/* ============================= */
+#welcomePopup {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0,0,0,0.65);
+  z-index: 10000;
+  touch-action: pan-y;
+}
+
+#welcomePopup.show { display: flex; }
+
+#welcomePopup .popup-card {
+  width: min(335px, 92vw);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  background: #0b0b0b;
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.65);
+}
+
+#welcomePopup .popup-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+#welcomePopup .popup-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,0.9);
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+#welcomePopup .popup-close:active { transform: scale(0.96); }
+
+#welcomePopup .popup-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+#welcomePopup .popup-btn {
+  padding: 16px 14px;
+  text-align: center;
+  font-weight: 900;
+  text-decoration: none;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+  user-select: none;
+}
+
+#welcomePopup .popup-btn-left {
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+#welcomePopup .popup-btn-right {
+  background: #ff0000;
+  color: #ffffff;
+}
+
+#welcomePopup .popup-btn:active { filter: brightness(0.95); }
+
+/* kunci scroll saat popup tampil */
+/* popup-lock tidak dipakai lagi (background tetap bisa scroll) */
+body.popup-lock { overflow: auto !important; }
+
+</style>
 </head>
 <body>
 <div class="statusbar-space"></div>
@@ -343,6 +429,19 @@ body.product-page {
     <div class="intro-text">KZRIZUSMO STORE</div>
     <small style="margin-top:10px; color:#aaa;">Tap untuk masuk</small>
 </div>
+
+
+    <!-- POPUP: Alur Proses Order -->
+    <div id="welcomePopup" onclick="playClick(); closeWelcomePopup()">
+      <div class="popup-card" role="dialog" aria-modal="true" aria-label="Informasi proses order" onclick="event.stopPropagation()">
+        <button class="popup-close" onclick="playClick(); closeWelcomePopup()" aria-label="Close">&times;</button>
+        <img class="popup-img" src="https://files.catbox.moe/5cpocn.jpg" alt="Pahami alur proses order">
+        <div class="popup-actions">
+          <a class="popup-btn popup-btn-left" href="https://chat.whatsapp.com/BvbJh4kPHNM9ixyWaUXR50?mode=gi_t" target="_blank" rel="noopener" onclick="playClick()">Join Group</a>
+          <a class="popup-btn popup-btn-right" href="https://whatsapp.com/channel/0029VbBIDqU0QeapW6V3sH1n" target="_blank" rel="noopener" onclick="playClick()">Join Saluran</a>
+        </div>
+      </div>
+    </div>
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div class="sidebar" id="sidebar">
@@ -2708,10 +2807,25 @@ document.addEventListener("click", () => {
 });
 </script>
 <script>
+function showWelcomePopup() {
+  const popup = document.getElementById("welcomePopup");
+  if (!popup) return;
+  popup.classList.add("show");
+}
+
+function closeWelcomePopup() {
+  const popup = document.getElementById("welcomePopup");
+  if (!popup) return;
+  popup.classList.remove("show");
+}
+
 function openApp() {
   const intro = document.getElementById("introOverlay");
-  intro.style.display = "none";
+  if (intro) intro.style.display = "none";
   document.body.style.overflow = "auto";
+
+  // tampilkan popup setelah masuk halaman utama
+  setTimeout(showWelcomePopup, 120);
 }
 </script>
 <script>
